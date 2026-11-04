@@ -393,15 +393,20 @@ var TTS={ok:"speechSynthesis" in window,voices:[]};
 function loadVoices(){if(!TTS.ok)return;TTS.voices=speechSynthesis.getVoices().filter(function(v){return /^en(-|_|$)/i.test(v.lang)});fillVoiceSelect()}
 if(TTS.ok){loadVoices();try{speechSynthesis.addEventListener("voiceschanged",loadVoices)}catch(e){speechSynthesis.onvoiceschanged=loadVoices}}
 function fillVoiceSelect(){var sel=$("voiceSel");if(!sel)return;var cur=prefs.voice;sel.innerHTML='<option value="">Automatique</option>'+TTS.voices.map(function(v){return '<option value="'+esc(v.name)+'">'+esc(v.name+" ("+v.lang+")")+'</option>'}).join("");sel.value=cur}
-function pickVoice(idx){var vs=TTS.voices;if(!vs.length)return null;if(idx===0&&prefs.voice){var f=vs.filter(function(v){return v.name===prefs.voice})[0];if(f)return f}
-  var pref=vs.filter(function(v){return v.lang.replace("_","-").indexOf(prefs.lang)===0});var pool=pref.length?pref:vs;
-  if(idx===0)return pool[0];var other=vs.filter(function(v){return v!==pickVoice(0)});return other[(idx-1)%Math.max(1,other.length)]||pool[0]}
+function pickVoice(idx){if(!TTS.voices.length)loadVoices();var vs=TTS.voices;if(!vs.length)return null;
+  var lang=function(v){return v.lang.replace("_","-")};
+  var pref=vs.filter(function(v){return lang(v).indexOf(prefs.lang)===0});var pool=pref.length?pref:vs;
+  var first=(prefs.voice&&vs.filter(function(v){return v.name===prefs.voice})[0])||pool[0];
+  if(!idx)return first;
+  var others=pref.filter(function(v){return v.name!==first.name});
+  if(!others.length)others=vs.filter(function(v){return v.name!==first.name});
+  return others.length?others[(idx-1)%others.length]:first}
 var keepU=[],ttsUnlocked=false,isIOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 function unlockTTS(){if(ttsUnlocked||!TTS.ok)return;ttsUnlocked=true;try{var u=new SpeechSynthesisUtterance(" ");u.volume=0;keepU.push(u);speechSynthesis.speak(u)}catch(e){}}
 document.addEventListener("touchend",unlockTTS,{once:true,passive:true});document.addEventListener("click",unlockTTS,{once:true});
 function speak(text,opt){opt=opt||{};if(!TTS.ok){toast("La synthèse vocale n'est pas disponible sur ce navigateur.");return}
   var done=false;function fin(){if(done)return;done=true;clearTimeout(wd);opt.onend&&opt.onend()}
-  var u=new SpeechSynthesisUtterance(text);u.lang=prefs.lang;u.rate=opt.rate||prefs.rate;u.volume=1;var v=pickVoice(opt.voice||0);if(v){u.voice=v;u.lang=v.lang}
+  var u=new SpeechSynthesisUtterance(text);u.lang=prefs.lang;u.rate=opt.rate||prefs.rate;u.volume=1;var v=pickVoice(opt.voice||0);if(v){u.voice=v;u.lang=v.lang}if(opt.voice){var v0=pickVoice(0);if(!v||!v0||v.name===v0.name)u.pitch=opt.voice%2?0.75:1.3}
   u.onend=fin;u.onerror=function(e){if(e&&e.error==="not-allowed")toast("Touche à nouveau ▶ : Safari demande un geste pour lancer la voix.");fin()};
   keepU.push(u);if(keepU.length>60)keepU.shift();
   var words=String(text).split(/\s+/).length,wd=setTimeout(fin,(words*0.55/(u.rate||1)+4)*1000);
