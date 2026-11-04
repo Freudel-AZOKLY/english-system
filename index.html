@@ -264,6 +264,53 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
 .pl-res b,.stat-row b{font:700 20px var(--f-display);color:var(--cyan)}
 .day-cell.skipped{opacity:.35;text-decoration:line-through}
 @media(max-width:600px){.pl-res,.stat-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ===== Navigation par onglets ===== */
+:root{--navh:64px}
+.tabbar{display:flex;gap:4px;position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:#070b12ee;backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;padding:4px;margin:0 0 16px}
+.tabbar button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;border:0;background:transparent;color:var(--muted);border-radius:9px;padding:9px 6px;font:600 13px var(--f-display);letter-spacing:.04em}
+.tabbar button[aria-selected="true"]{background:#0d2941;color:var(--text);box-shadow:inset 0 0 0 1px var(--blue)}
+.tb-ic{font-size:15px}
+.tabpane{display:grid;gap:16px;min-width:0}
+.pane-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:16px;align-items:start;min-width:0}
+.topgrid-wrap .topgrid{margin-bottom:0}
+.hud{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.hud-item{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:8px 10px;display:grid;gap:2px;text-align:left;color:var(--text);min-width:0}
+.hud-item b{font:700 16px var(--f-display);color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hud-l{font:600 10px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+button.hud-item:hover{border-color:var(--blue)}
+.day-banner{margin-bottom:0}
+.quest-desc.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.quest{cursor:pointer}
+header{padding:4px 0 14px;margin-bottom:14px}
+.brand h1{font-size:clamp(18px,2.6vw,26px)}
+/* ===== Activité plein écran ===== */
+.ws-overlay{position:fixed;inset:0;z-index:30;background:var(--bg);display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;padding-top:env(safe-area-inset-top,0px)}
+.ws-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px max(16px,env(safe-area-inset-left,0px)) 10px max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--line);background:var(--panel)}
+.ws-titles{min-width:0;text-align:center}.ws-titles h2{margin:0;font:600 16px var(--f-display);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-progress{height:4px;background:var(--grid)}.ws-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue2),var(--cyan));transition:width .3s}
+.ws-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.ws-inner{max-width:860px;margin:auto}
+.ws-foot{display:flex;gap:10px;justify-content:space-between;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--panel)}
+.ws-foot .btn{flex:1;max-width:260px}
+body.ws-open{overflow:hidden}
+body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+.timerbar{z-index:40}
+@media(max-width:700px){
+  .tabbar{position:fixed;top:auto;left:0;right:0;bottom:0;margin:0;border-radius:0;border-width:1px 0 0;padding:4px max(6px,env(safe-area-inset-left,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-right,0px))}
+  .tabbar button{flex-direction:column;gap:2px;font-size:10.5px;padding:6px 2px;letter-spacing:.02em}
+  .tb-ic{font-size:18px}
+  .wrap{padding-bottom:calc(var(--navh) + 90px + env(safe-area-inset-bottom,0px))}
+  .timerbar{bottom:calc(var(--navh) + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(var(--navh) + 14px + env(safe-area-inset-bottom,0px))}
+  .hud{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.hud-item{padding:7px 8px}.hud-item b{font-size:14px}
+  .sub,.header-right{display:none}
+  header{margin-bottom:10px;padding-bottom:10px}
+  .day-banner .action-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px}
+  #startSession{grid-column:1/-1;padding:13px}
+  .day-number{font-size:22px}.banner-title strong{font-size:15px}.topic-line{font-size:14px}
+  .day-banner{padding:14px}
+}
 .toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#0d2941;border:1px solid var(--blue);color:var(--text);padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:calc(100% - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .prompt-box{font:12px/1.5 var(--f-mono);min-height:120px}
@@ -273,10 +320,64 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
 
 <div class="wrap">
 <header>
-  <div class="brand"><div class="sigil" aria-hidden="true">E</div><div><div class="eyebrow">Player development protocol // v3.0</div><h1>ENGLISH SYSTEM</h1><div class="sub">A2 → C1 · 300 JOURS · 2 H/JOUR · 4 COMPÉTENCES</div></div></div>
-  <div class="header-right"><span class="pill" id="saveStatus">● Enregistré sur cet appareil</span><a class="btn small ghost" href="#diag">Diagnostic</a><a class="btn small ghost" href="#data">Mes données</a></div>
+  <div class="brand"><div class="sigil" aria-hidden="true">E</div><div><div class="eyebrow">Player development protocol</div><h1>ENGLISH SYSTEM</h1><div class="sub">A2 → C1 · 300 JOURS · 2 H/JOUR · 4 COMPÉTENCES</div></div></div>
+  <div class="header-right"><span class="pill" id="saveStatus">● Enregistré sur cet appareil</span></div>
 </header>
-
+<nav class="tabbar" id="tabbar" role="tablist" aria-label="Sections">
+  <button role="tab" data-tab="today" aria-selected="true"><span class="tb-ic" aria-hidden="true">▣</span><span>Aujourd'hui</span></button>
+  <button role="tab" data-tab="arena" aria-selected="false"><span class="tb-ic" aria-hidden="true">⚔</span><span>Défis</span></button>
+  <button role="tab" data-tab="progress" aria-selected="false"><span class="tb-ic" aria-hidden="true">▲</span><span>Progrès</span></button>
+  <button role="tab" data-tab="tools" aria-selected="false"><span class="tb-ic" aria-hidden="true">✕</span><span>Outils</span></button>
+  <button role="tab" data-tab="settings" aria-selected="false"><span class="tb-ic" aria-hidden="true">⚙</span><span>Réglages</span></button>
+</nav>
+<div class="tabpane" id="tab-today" role="tabpanel">
+<section class="panel hidden" id="placement" style="margin-bottom:16px;border-color:var(--violet-line)"></section>
+<div class="hud" id="hud">
+  <button class="hud-item" data-goto="progress" aria-label="Voir ma progression"><span class="hud-l">Rang</span><b id="hudRank">E-RANK</b></button>
+  <div class="hud-item"><span class="hud-l">Jour</span><b class="num"><span id="hudDay">1</span><span class="muted">/300</span></b></div>
+  <div class="hud-item"><span class="hud-l">Série</span><b class="num"><span id="hudStreak">0</span> j</b></div>
+  <div class="hud-item"><span class="hud-l">Heures</span><b class="num" id="hudHours">0</b></div>
+</div>
+<div class="day-banner" id="dayBanner">
+  <div style="min-width:0">
+    <div class="eyebrow" id="bannerEyebrow">Séance du jour</div>
+    <div class="banner-title"><span class="day-number" id="bannerDay">DAY 001</span><strong id="phaseTitle">—</strong><span class="pill boss hidden" id="bossPill">◆ Épreuve hebdo</span><span class="pill test hidden" id="testPill">● Test mensuel</span></div>
+    <div class="banner-meta">
+      <div class="topic-line" id="topicWrap">Sujet : <em>—</em></div>
+      <div>Grammaire de la semaine : <b id="grammarLine">—</b></div>
+      <div id="dateLine">—</div>
+    </div>
+  </div>
+  <div class="action-row"><button class="btn primary" id="startSession">▶ Commencer la séance</button><button class="btn" id="prevDay" aria-label="Jour précédent">←</button><button class="btn" id="todayBtn">Aujourd'hui</button><button class="btn" id="nextDay" aria-label="Jour suivant">→</button></div>
+</div>
+  <section class="panel" id="questPanel">
+    <div class="panel-head"><h2>▣ Séance du jour</h2><span class="pill num" id="questCount">0 / 7</span></div>
+    <div class="notice hidden" id="lockNotice"></div>
+    <div class="notice info hidden" id="focusNotice"></div>
+    <div id="quests"></div>
+    <div class="progress"><span id="questProgress"></span></div>
+    <div class="stat-foot"><span class="num" id="minutesGoal">0 / 120 min</span><span class="num" id="questXP">+0 XP restants</span></div>
+    <div class="bonus">
+      <div class="bonus-row">
+        <label for="immersionMin">Immersion libre (téléphone en anglais, séries sans sous-titres français, podcasts). C'est un bonus : elle ne remplace pas la séance.</label>
+        <div class="action-row"><input type="number" id="immersionMin" min="0" max="600" step="5" value="0" inputmode="numeric"><span class="muted tiny">min</span></div>
+      </div>
+      <div class="bonus-row">
+        <label><input type="checkbox" id="humanDone" style="accent-color:var(--amber)"> Conversation de 20 min avec une vraie personne : 2 min de small talk, 8 min de sujet, 5 min de questions, 5 min pour noter les corrections.</label>
+        <span class="xp">+40 XP</span>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="tabpane hidden" id="tab-arena" role="tabpanel">
+  <section class="panel" id="arena">
+    <div class="panel-head"><h2>⚔ Arène des défis</h2><span class="pill num" id="arenaXP">0 / 60 XP aujourd'hui</span></div>
+    <p class="muted tiny">Des défis courts pour entraîner l'oreille, la prononciation et la spontanéité, en plus de la séance. La mission du jour rapporte double XP.</p>
+    <div class="game-grid" id="arenaGrid"></div>
+    <div class="game-box hidden" id="gameBox"></div>
+  </section>
+</div>
+<div class="tabpane hidden" id="tab-progress" role="tabpanel"><div class="topgrid-wrap">
 <div class="grid topgrid">
   <section class="panel rank-card" aria-label="Rang">
     <div class="stat-label">Rang actuel</div>
@@ -304,77 +405,22 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <div class="stat-note" id="xpStat" style="margin-top:4px">XP total : 0</div>
   </section>
 </div>
-
-<section class="panel hidden" id="placement" style="margin-bottom:16px;border-color:var(--violet-line)"></section>
-
-<div class="day-banner" id="dayBanner">
-  <div style="min-width:0">
-    <div class="eyebrow" id="bannerEyebrow">Séance du jour</div>
-    <div class="banner-title"><span class="day-number" id="bannerDay">DAY 001</span><strong id="phaseTitle">—</strong><span class="pill boss hidden" id="bossPill">◆ Épreuve hebdo</span><span class="pill test hidden" id="testPill">● Test mensuel</span></div>
-    <div class="banner-meta">
-      <div class="topic-line" id="topicWrap">Sujet : <em>—</em></div>
-      <div>Grammaire de la semaine : <b id="grammarLine">—</b></div>
-      <div id="dateLine">—</div>
-    </div>
-  </div>
-  <div class="action-row"><button class="btn primary" id="startSession">▶ Commencer la séance</button><button class="btn" id="prevDay" aria-label="Jour précédent">←</button><button class="btn" id="todayBtn">Aujourd'hui</button><button class="btn" id="nextDay" aria-label="Jour suivant">→</button></div>
-</div>
-
-<div class="grid main-grid">
-<div class="col">
-  <section class="panel">
-    <div class="panel-head"><h2>▣ Séance du jour</h2><span class="pill num" id="questCount">0 / 7</span></div>
-    <div class="notice hidden" id="lockNotice"></div>
-    <div class="notice info hidden" id="focusNotice"></div>
-    <div id="quests"></div>
-    <div class="progress"><span id="questProgress"></span></div>
-    <div class="stat-foot"><span class="num" id="minutesGoal">0 / 120 min</span><span class="num" id="questXP">+0 XP restants</span></div>
-    <div class="bonus">
-      <div class="bonus-row">
-        <label for="immersionMin">Immersion libre (téléphone en anglais, séries sans sous-titres français, podcasts). C'est un bonus : elle ne remplace pas la séance.</label>
-        <div class="action-row"><input type="number" id="immersionMin" min="0" max="600" step="5" value="0" inputmode="numeric"><span class="muted tiny">min</span></div>
-      </div>
-      <div class="bonus-row">
-        <label><input type="checkbox" id="humanDone" style="accent-color:var(--amber)"> Conversation de 20 min avec une vraie personne : 2 min de small talk, 8 min de sujet, 5 min de questions, 5 min pour noter les corrections.</label>
-        <span class="xp">+40 XP</span>
-      </div>
-    </div>
+</div><div class="pane-grid">
+  <section class="panel" id="stats">
+    <div class="panel-head"><h2>▲ Statistiques</h2><span class="pill">mises à jour automatiquement</span></div>
+    <div id="statsBox"><p class="tiny muted">Calcul…</p></div>
   </section>
-
-  <section class="panel hidden" id="workshop" aria-live="polite">
-    <div class="panel-head"><div><div class="eyebrow">Activité</div><h2 id="wsTitle">—</h2><div class="tiny muted" id="wsMeta"></div></div><div class="action-row"><button class="btn small primary hidden" id="wsNext">Bloc suivant →</button><button class="btn small ghost" id="wsClose">Fermer</button></div></div>
-    <div id="wsBody"></div>
+  <section class="panel" id="protocol">
+    <div class="panel-head"><h2>◉ Programme du mois</h2><span class="pill" id="phasePill">MOIS 01</span></div>
+    <h3 id="phaseHeading">—</h3>
+    <p class="muted tiny" id="phaseDescription"></p>
+    <div class="level-list" id="phaseLevels"></div>
+    <hr class="separator">
+    <h3>Objectif du mois</h3>
+    <p class="muted tiny" id="workTarget"></p>
+    <h3 style="margin-top:12px">Je peux… <span class="muted tiny" id="candoCount"></span></h3>
+    <div class="cando" id="candoList"></div>
   </section>
-
-  <section class="panel" id="arena">
-    <div class="panel-head"><h2>⚔ Arène des défis</h2><span class="pill num" id="arenaXP">0 / 60 XP aujourd'hui</span></div>
-    <p class="muted tiny">Des défis courts pour entraîner l'oreille, la prononciation et la spontanéité, en plus de la séance. La mission du jour rapporte double XP.</p>
-    <div class="game-grid" id="arenaGrid"></div>
-    <div class="game-box hidden" id="gameBox"></div>
-  </section>
-
-  <section class="panel" id="coach">
-    <div class="panel-head"><h2>✦ Prompts pour ton IA</h2><span class="pill">copier-coller</span></div>
-    <p class="muted tiny">L'app prépare la consigne complète, adaptée à ton niveau et au sujet du jour. Copie-la, puis colle-la dans l'assistant IA de ton choix. Vérifie les explications importantes dans le Cambridge Dictionary.</p>
-    <div class="tabs" role="tablist"><button class="tab" role="tab" id="tabCorr" aria-selected="true" aria-controls="paneCorr">Correction de texte</button><button class="tab" role="tab" id="tabChat" aria-selected="false" aria-controls="paneChat">Partenaire de conversation</button></div>
-    <div id="paneCorr" role="tabpanel" aria-labelledby="tabCorr">
-      <div class="two">
-        <div class="field"><label for="corrKind">Type de texte</label><select id="corrKind"><option value="written text">Texte écrit</option><option value="transcript of spoken English">Transcription orale</option></select></div>
-        <div class="field"><label for="corrTarget">Version améliorée visée</label><select id="corrTarget"><option>B1</option><option>B2</option><option selected>C1</option></select></div>
-      </div>
-      <div class="field"><label for="corrInput">Ton texte</label><textarea id="corrInput" style="min-height:140px" placeholder="Yesterday I have worked on my thesis and I am agree that the results depends of the data…"></textarea><span class="score-hint num" id="corrWords">0 mot</span></div>
-      <div class="action-row"><button class="btn primary" id="corrBtn">Copier la demande de correction</button><span class="tiny muted" id="corrStatus"></span></div>
-      <p class="tiny muted" style="margin-top:10px">Ensuite, reporte les erreurs importantes dans ton carnet ci-dessous, avec une nouvelle phrase à toi.</p>
-    </div>
-    <div id="paneChat" role="tabpanel" aria-labelledby="tabChat" class="hidden">
-      <div class="field"><label for="chatScenario">Scénario</label><select id="chatScenario"></select></div>
-      <div class="action-row"><button class="btn primary" id="chatBtn">Copier le prompt du scénario</button><button class="btn ghost" id="chatEndBtn">Copier le prompt de bilan</button><span class="tiny muted" id="chatStatus"></span></div>
-      <p class="tiny muted" style="margin-top:10px">Pour travailler l'oral, utilise le mode vocal de l'assistant s'il en a un, ou réponds avec la dictée vocale de ton clavier. À la fin, colle le prompt de bilan dans la même conversation pour obtenir la liste de tes erreurs récurrentes.</p>
-    </div>
-    <div class="field hidden" id="promptBox" style="margin-top:12px"><label for="promptOut">Prompt prêt (si la copie automatique ne marche pas, sélectionne-le)</label><textarea id="promptOut" class="prompt-box" readonly></textarea></div>
-    <div class="ai-links" style="margin-top:10px"><span class="tiny muted" style="align-self:center">Ouvrir :</span><a class="btn small ghost" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT ↗</a><a class="btn small ghost" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini ↗</a><a class="btn small ghost" href="https://chat.mistral.ai/" target="_blank" rel="noopener">Le Chat ↗</a><a class="btn small ghost" href="https://claude.ai/new" target="_blank" rel="noopener">Claude ↗</a></div>
-  </section>
-
   <section class="panel" id="assessPanel">
     <div class="panel-head"><h2>◈ Évaluation hebdo</h2><span class="pill">jours 7, 14, 21…</span></div>
     <p class="muted tiny">Note-toi après avoir réécouté ton épreuve. Ta compétence la plus faible reçoit 10 min de plus pendant les 7 jours suivants, prises sur le shadowing et la révision. Si tout est à 4 ou plus, l'oral passe en mode difficile.</p>
@@ -394,7 +440,6 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <h3 style="margin-top:14px">Courbe des bilans</h3>
     <div class="chart-box" id="chartBox"></div>
   </section>
-
   <section class="panel" id="testPanel">
     <div class="panel-head"><h2>● Tests mensuels</h2><span class="pill">jours 30, 60, 90…</span></div>
     <p class="muted tiny">Chaque mois, mêmes mesures et mêmes conditions. Le niveau se mesure, il ne se déduit pas des heures. Parler longtemps avec des erreurs systématiques ne vaut pas parler avec précision.</p>
@@ -413,13 +458,39 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     </div>
     <div class="table-box" id="testTable"></div>
   </section>
-
-  <section class="panel" id="stats">
-    <div class="panel-head"><h2>▲ Statistiques</h2><span class="pill">mises à jour automatiquement</span></div>
-    <div id="statsBox"><p class="tiny muted">Calcul…</p></div>
+  <section class="panel" id="mapPanel">
+    <div class="panel-head"><h2>▦ Carte de progression</h2><span class="pill">300 jours · 43 semaines · 10 mois</span></div>
+    <div class="day-list" id="dayMap"></div>
+    <div class="legend"><span><i style="background:#103222;border-color:#24744b"></i>Complet</span><span><i style="background:#0f2433;border-color:#2b5675"></i>Partiel</span><span><i style="border-color:#4a2733"></i>Manqué</span><span><i style="border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)"></i>Sélectionné</span><span><i style="outline:1px dashed var(--amber);border:0"></i>Aujourd'hui</span><span style="text-decoration:line-through">Dispensé</span><span style="color:var(--amber)">◆ Épreuve hebdo</span><span style="color:var(--violet)">● Test mensuel</span></div>
   </section>
-
-  <section class="panel">
+  <section class="panel" id="badges">
+    <div class="panel-head"><h2>♛ Succès</h2><span class="pill num" id="badgeCount">0</span></div>
+    <div class="badge-grid" id="badgeGrid"></div>
+  </section>
+</div></div>
+<div class="tabpane hidden" id="tab-tools" role="tabpanel"><div class="pane-grid">
+  <section class="panel" id="coach">
+    <div class="panel-head"><h2>✦ Prompts IA</h2><span class="pill">copier-coller</span></div>
+    <p class="muted tiny">L'app prépare la consigne complète, adaptée à ton niveau et au sujet du jour. Copie-la, puis colle-la dans l'assistant IA de ton choix. Vérifie les explications importantes dans le Cambridge Dictionary.</p>
+    <div class="tabs" role="tablist"><button class="tab" role="tab" id="tabCorr" aria-selected="true" aria-controls="paneCorr">Correction de texte</button><button class="tab" role="tab" id="tabChat" aria-selected="false" aria-controls="paneChat">Partenaire de conversation</button></div>
+    <div id="paneCorr" role="tabpanel" aria-labelledby="tabCorr">
+      <div class="two">
+        <div class="field"><label for="corrKind">Type de texte</label><select id="corrKind"><option value="written text">Texte écrit</option><option value="transcript of spoken English">Transcription orale</option></select></div>
+        <div class="field"><label for="corrTarget">Version améliorée visée</label><select id="corrTarget"><option>B1</option><option>B2</option><option selected>C1</option></select></div>
+      </div>
+      <div class="field"><label for="corrInput">Ton texte</label><textarea id="corrInput" style="min-height:140px" placeholder="Yesterday I have worked on my thesis and I am agree that the results depends of the data…"></textarea><span class="score-hint num" id="corrWords">0 mot</span></div>
+      <div class="action-row"><button class="btn primary" id="corrBtn">Copier la demande de correction</button><span class="tiny muted" id="corrStatus"></span></div>
+      <p class="tiny muted" style="margin-top:10px">Ensuite, reporte les erreurs importantes dans ton carnet ci-dessous, avec une nouvelle phrase à toi.</p>
+    </div>
+    <div id="paneChat" role="tabpanel" aria-labelledby="tabChat" class="hidden">
+      <div class="field"><label for="chatScenario">Scénario</label><select id="chatScenario"></select></div>
+      <div class="action-row"><button class="btn primary" id="chatBtn">Copier le prompt du scénario</button><button class="btn ghost" id="chatEndBtn">Copier le prompt de bilan</button><span class="tiny muted" id="chatStatus"></span></div>
+      <p class="tiny muted" style="margin-top:10px">Pour travailler l'oral, utilise le mode vocal de l'assistant s'il en a un, ou réponds avec la dictée vocale de ton clavier. À la fin, colle le prompt de bilan dans la même conversation pour obtenir la liste de tes erreurs récurrentes.</p>
+    </div>
+    <div class="field hidden" id="promptBox" style="margin-top:12px"><label for="promptOut">Prompt prêt (si la copie automatique ne marche pas, sélectionne-le)</label><textarea id="promptOut" class="prompt-box" readonly></textarea></div>
+    <div class="ai-links" style="margin-top:10px"><span class="tiny muted" style="align-self:center">Ouvrir :</span><a class="btn small ghost" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT ↗</a><a class="btn small ghost" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini ↗</a><a class="btn small ghost" href="https://chat.mistral.ai/" target="_blank" rel="noopener">Le Chat ↗</a><a class="btn small ghost" href="https://claude.ai/new" target="_blank" rel="noopener">Claude ↗</a></div>
+  </section>
+  <section class="panel" id="carnet">
     <div class="panel-head"><h2>✕ My English Mistakes</h2><span class="pill num" id="errCount">0</span></div>
     <p class="muted tiny">L'habitude la plus importante du programme. Pour chaque erreur : la forme fautive, la correction, et une nouvelle phrase à toi qui utilise la bonne forme. Chaque soir, relis 5 erreurs.</p>
     <div class="err-cols">
@@ -430,33 +501,19 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <div class="action-row"><select id="errCat" aria-label="Catégorie de l'erreur" style="width:auto"><option value="grammaire">Grammaire</option><option value="mot">Choix du mot</option><option value="collocation">Collocation</option><option value="ordre">Ordre des mots</option><option value="prononciation">Prononciation</option><option value="registre">Registre</option></select><button class="btn" id="addErr">Ajouter</button><button class="btn ghost" id="reviewBtn">Révision du soir (5)</button><button class="btn small primary hidden" id="reviewDone">J'ai révisé ces 5</button><span class="muted tiny" id="errStatus"></span></div>
     <div class="err-list" id="errList"></div>
   </section>
-
-  <section class="panel">
-    <div class="panel-head"><h2>▦ Carte de progression</h2><span class="pill">300 jours · 43 semaines · 10 mois</span></div>
-    <div class="day-list" id="dayMap"></div>
-    <div class="legend"><span><i style="background:#103222;border-color:#24744b"></i>Complet</span><span><i style="background:#0f2433;border-color:#2b5675"></i>Partiel</span><span><i style="border-color:#4a2733"></i>Manqué</span><span><i style="border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)"></i>Sélectionné</span><span><i style="outline:1px dashed var(--amber);border:0"></i>Aujourd'hui</span><span style="text-decoration:line-through">Dispensé</span><span style="color:var(--amber)">◆ Épreuve hebdo</span><span style="color:var(--violet)">● Test mensuel</span></div>
+  <section class="panel" id="journalPanel">
+    <div class="panel-head"><h2>◎ Journal</h2><span class="pill" id="journalDay">J1</span></div>
+    <div class="field"><label for="journal">Notes du jour</label><textarea id="journal" placeholder="Nouvelle expression, erreur corrigée, sujet à retravailler…"></textarea></div>
+    <div class="field"><label for="customGoal">Micro-objectif</label><input type="text" id="customGoal" placeholder="Ex. présenter mon mémoire en 90 secondes"></div>
+    <div class="action-row"><button class="btn" id="saveJournal">Enregistrer</button><span class="muted tiny" id="journalStatus"></span></div>
   </section>
-</div>
-
-<aside class="col">
-  <section class="panel">
-    <div class="panel-head"><h2>◉ Protocole du mois</h2><span class="pill" id="phasePill">MOIS 01</span></div>
-    <h3 id="phaseHeading">—</h3>
-    <p class="muted tiny" id="phaseDescription"></p>
-    <div class="level-list" id="phaseLevels"></div>
-    <hr class="separator">
-    <h3>Objectif du mois</h3>
-    <p class="muted tiny" id="workTarget"></p>
-    <h3 style="margin-top:12px">Je peux… <span class="muted tiny" id="candoCount"></span></h3>
-    <div class="cando" id="candoList"></div>
+  <section class="panel" id="resources">
+    <div class="panel-head"><h2>↗ Ressources gratuites</h2><span class="pill">6 outils max</span></div>
+    <div class="res-list" id="resList"></div>
   </section>
-
-  <section class="panel" id="badges">
-    <div class="panel-head"><h2>♛ Succès</h2><span class="pill num" id="badgeCount">0</span></div>
-    <div class="badge-grid" id="badgeGrid"></div>
-  </section>
-
-  <section class="panel">
+</div></div>
+<div class="tabpane hidden" id="tab-settings" role="tabpanel"><div class="pane-grid">
+  <section class="panel" id="settings">
     <div class="panel-head"><h2>⚙ Réglages</h2></div>
     <div class="field"><label for="startDate">Date de début (jour 1)</label><input type="date" id="startDate"></div>
     <div class="field"><label for="track">Parcours des sujets</label><select id="track"><option value="acad">Académique & recherche (économétrie, data)</option><option value="pro">Professionnel (entreprise, entretiens)</option></select></div>
@@ -478,27 +535,6 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <label class="tiny" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="srToggle"> Transcription automatique de mes enregistrements</label>
     <p class="tiny muted" id="srNote" style="margin-top:6px">La transcription utilise la reconnaissance vocale de ton navigateur. Sur Chrome et Edge, l'audio est envoyé au service de Google ou Microsoft pour être transcrit. Tes enregistrements, eux, restent sur l'appareil.</p>
   </section>
-
-  <section class="panel">
-    <div class="panel-head"><h2>◎ Journal</h2><span class="pill" id="journalDay">J1</span></div>
-    <div class="field"><label for="journal">Notes du jour</label><textarea id="journal" placeholder="Nouvelle expression, erreur corrigée, sujet à retravailler…"></textarea></div>
-    <div class="field"><label for="customGoal">Micro-objectif</label><input type="text" id="customGoal" placeholder="Ex. présenter mon mémoire en 90 secondes"></div>
-    <div class="action-row"><button class="btn" id="saveJournal">Enregistrer</button><span class="muted tiny" id="journalStatus"></span></div>
-  </section>
-
-  <section class="panel">
-    <div class="panel-head"><h2>↗ Arsenal gratuit</h2><span class="pill">6 outils max</span></div>
-    <div class="res-list" id="resList"></div>
-  </section>
-
-  <section class="panel" id="diag">
-    <div class="panel-head"><h2>✚ Diagnostic</h2><span class="pill">cet appareil</span></div>
-    <p class="muted tiny">Vérifie que tout fonctionne sur cet appareil : sauvegarde, mode hors ligne, mises à jour, voix, micro et transcription.</p>
-    <div class="action-row"><button class="btn primary" id="diagBtn">Lancer la vérification</button><button class="btn" id="diagVoice">Tester les voix</button><button class="btn" id="diagMic">Tester le micro</button></div>
-    <p class="tiny" id="diagLive" style="margin-top:8px" aria-live="polite"></p>
-    <div id="diagOut"></div>
-  </section>
-
   <section class="panel" id="data">
     <div class="panel-head"><h2>⇅ Mes données</h2></div>
     <p class="muted tiny" id="syncExplain">Tes données restent sur cet appareil, et nulle part ailleurs. Pour passer de l'ordinateur au téléphone : exporte ici, puis importe le fichier sur l'autre appareil.</p>
@@ -529,9 +565,26 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <button class="btn danger small" id="resetBtn">Réinitialiser…</button>
     <div class="confirm-zone" id="resetZone"><span class="tiny" style="color:var(--red)">Tout effacer ? Exporte d'abord.</span><button class="btn danger small" id="resetConfirm">Oui, effacer</button><button class="btn small" id="resetCancel">Annuler</button></div>
   </section>
-</aside>
+  <section class="panel" id="diag">
+    <div class="panel-head"><h2>✚ Diagnostic</h2><span class="pill">cet appareil</span></div>
+    <p class="muted tiny">Vérifie que tout fonctionne sur cet appareil : sauvegarde, mode hors ligne, mises à jour, voix, micro et transcription.</p>
+    <div class="action-row"><button class="btn primary" id="diagBtn">Lancer la vérification</button><button class="btn" id="diagVoice">Tester les voix</button><button class="btn" id="diagMic">Tester le micro</button></div>
+    <p class="tiny" id="diagLive" style="margin-top:8px" aria-live="polite"></p>
+    <div id="diagOut"></div>
+  </section>
 </div>
 <footer>ENGLISH SYSTEM v3.0 · Aucune certification officielle. Le C1 se valide par un examen (Cambridge C1 Advanced, IELTS 7+). Ce calendrier est un objectif de progression : si un test mensuel montre qu'une compétence reste en retard, ralentis plutôt que de faire semblant. Application autonome : aucun compte. Tes données et tes enregistrements restent sur ton appareil (seule la transcription automatique, si tu l'actives, passe par le service de ton navigateur). Contenu d'écoute et de lecture original, lu par les voix de ton appareil.</footer>
+</div>
+</div>
+<div class="ws-overlay hidden" id="workshop" role="dialog" aria-modal="true" aria-labelledby="wsTitle">
+  <div class="ws-head">
+    <button class="btn small ghost" id="wsClose" aria-label="Retour à la séance">← Séance</button>
+    <div class="ws-titles"><div class="eyebrow" id="wsMeta"></div><h2 id="wsTitle">—</h2></div>
+    <button class="btn small" id="wsTimer" aria-label="Lancer le minuteur">⏱</button>
+  </div>
+  <div class="ws-progress"><span id="wsProg"></span></div>
+  <div class="ws-body" id="wsScroll"><div class="ws-inner"><div id="wsBody"></div></div></div>
+  <div class="ws-foot"><button class="btn" id="wsPrev">← Précédent</button><button class="btn primary" id="wsNext">Suivant →</button></div>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
@@ -543,16 +596,16 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
   </div>
 </div>
 
-<script src="content-w01-05.js?v=9"></script>
-<script src="content-w06-09.js?v=9"></script>
-<script src="content-w10-15.js?v=9"></script>
-<script src="content-w16-21.js?v=9"></script>
-<script src="content-w22-27.js?v=9"></script>
-<script src="content-w28-33.js?v=9"></script>
-<script src="content-w34-38.js?v=9"></script>
-<script src="content-w39-43.js?v=9"></script>
-<script src="content-tests.js?v=9"></script>
-<script src="placement-data.js?v=9"></script>
-<script src="app.js?v=9"></script>
+<script src="content-w01-05.js?v=10"></script>
+<script src="content-w06-09.js?v=10"></script>
+<script src="content-w10-15.js?v=10"></script>
+<script src="content-w16-21.js?v=10"></script>
+<script src="content-w22-27.js?v=10"></script>
+<script src="content-w28-33.js?v=10"></script>
+<script src="content-w34-38.js?v=10"></script>
+<script src="content-w39-43.js?v=10"></script>
+<script src="content-tests.js?v=10"></script>
+<script src="placement-data.js?v=10"></script>
+<script src="app.js?v=10"></script>
 </body>
 </html>

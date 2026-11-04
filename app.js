@@ -223,6 +223,7 @@ function render(){
   var h=T.min/60;$("hoursStat").textContent=h.toLocaleString("fr-FR",{maximumFractionDigits:1});$("hoursProgress").style.width=Math.min(100,h/600*100)+"%";
   $("hoursSub").textContent="Séances ≈ "+Math.round(PLAN_MIN/60)+" h · l'immersion et les conversations complètent jusqu'à 600 h";
   $("streakStat").textContent=st.cur;$("streakSub").textContent="Record : "+st.best+" jour"+(st.best>1?"s":"");$("xpStat").textContent="XP total : "+T.xp.toLocaleString("fr-FR");
+  $("hudRank").textContent=rank.name;$("hudDay").textContent=tdy;$("hudStreak").textContent=st.cur;$("hudHours").textContent=h.toLocaleString("fr-FR",{maximumFractionDigits:0})+" h";
 
   var b=$("dayBanner");b.classList.toggle("boss",weekly);b.classList.toggle("test",test);
   $("bannerEyebrow").textContent=test?(d===DAYS?"Évaluation finale":"Test mensuel · fin du mois "+(mi+1)):weekly?"Jour léger · semaine "+weekOf(d):"Séance · mois "+(mi+1)+" · semaine "+weekOf(d);
@@ -242,7 +243,7 @@ function render(){
   $("questCount").textContent=done+" / "+qs.length;$("questProgress").style.width=(done/qs.length*100)+"%";
   $("minutesGoal").textContent=mins+" / "+budget+" min";
   $("questXP").textContent="+"+qs.reduce(function(s,q){return s+(isDone(d,q.k)?0:q.xp)},0)+" XP restants";
-  $("quests").innerHTML=qs.map(function(q,i){var dn=isDone(d,q.k);return '<div class="quest '+(dn?"done ":"")+q.cls+'"><input type="checkbox" id="q_'+q.k+'" data-k="'+q.k+'" '+(dn?"checked ":"")+(locked?"disabled":"")+'><div><label class="quest-title" for="q_'+q.k+'">'+esc(q.t)+'</label><div class="quest-desc">'+esc(q.d)+(q.note?'<span class="note">'+esc(q.note)+'</span>':'')+'</div><span class="tag">'+esc(q.tag)+' · '+q.m+' min</span>'+q.tags.map(function(t){return '<span class="tag '+t[0]+'">'+esc(t[1])+'</span>'}).join("")+'</div><div class="quest-side"><span class="xp">+'+q.xp+' XP</span>'+(locked?"":'<button class="btn small '+(dn?"ghost":"primary")+'" data-act="'+q.k+'">'+(dn?"Revoir":"Ouvrir")+'</button>')+(locked||dn?"":'<button class="btn small ghost" data-timer="'+i+'" aria-label="Minuteur : '+esc(q.t)+'">▶ '+q.m+' min</button>')+'</div></div>'}).join("");
+  $("quests").innerHTML=qs.map(function(q,i){var dn=isDone(d,q.k);return '<div class="quest '+(dn?"done ":"")+q.cls+'"><input type="checkbox" id="q_'+q.k+'" data-k="'+q.k+'" '+(dn?"checked ":"")+(locked?"disabled":"")+'><div><label class="quest-title" for="q_'+q.k+'">'+esc(q.t)+'</label><div class="quest-desc clamp">'+esc(q.d)+'</div>'+(q.note?'<div class="quest-desc"><span class="note">'+esc(q.note)+'</span></div>':'')+'<span class="tag">'+esc(q.tag)+' · '+q.m+' min</span>'+q.tags.map(function(t){return '<span class="tag '+t[0]+'">'+esc(t[1])+'</span>'}).join("")+'</div><div class="quest-side"><span class="xp">+'+q.xp+' XP</span>'+(locked?"":'<button class="btn small '+(dn?"ghost":"primary")+'" data-act="'+q.k+'">'+(dn?"Revoir":"Ouvrir")+'</button>')+'</div></div>'}).join("");
   $("immersionMin").value=state.bonus[d]||0;$("immersionMin").disabled=locked;$("humanDone").checked=!!state.human[d];$("humanDone").disabled=locked;
 
   var a=state.assessments[String(d)];
@@ -441,7 +442,7 @@ function makeRecorder(box,o){
     el.innerHTML="";rs.forEach(function(r){var div=document.createElement("div");div.className="rec-item";var url=URL.createObjectURL(r.blob);
       div.innerHTML='<div class="action-row" style="justify-content:space-between"><strong class="tiny">'+esc(r.label||"Prise")+' · '+new Date(r.created).toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"})+'</strong><span class="tiny muted num">'+fmtDur(r.dur)+' · parole '+fmtDur(r.speak)+' · '+r.pauses+' pause(s) longue(s)'+(r.wpm?' · '+r.wpm+' mots/min':'')+(r.fillers?' · '+r.fillers+' hésitation(s) « euh »':'')+'</span></div><audio controls preload="none" src="'+url+'"></audio><textarea class="rec-tr" placeholder="Transcription (modifiable)">'+esc(r.transcript||"")+'</textarea><div class="action-row"><button class="btn small" data-c="corr">Envoyer au correcteur</button><button class="btn small ghost" data-c="del">Supprimer</button></div>';
       div.querySelector('[data-c="del"]').onclick=function(){recDel(r.id).then(list)};
-      div.querySelector('[data-c="corr"]').onclick=function(){$("corrInput").value=div.querySelector(".rec-tr").value;$("corrKind").value="transcript of spoken English";$("corrInput").dispatchEvent(new Event("input"));setTab("corr");$("coach").scrollIntoView({behavior:"smooth"});toast("Transcription placée dans le correcteur")};
+      div.querySelector('[data-c="corr"]').onclick=function(){$("corrInput").value=div.querySelector(".rec-tr").value;$("corrKind").value="transcript of spoken English";$("corrInput").dispatchEvent(new Event("input"));setTab("corr");goTo("tools","coach");toast("Transcription placée dans le correcteur")};
       div.querySelector(".rec-tr").onchange=function(){r.transcript=this.value;r.words=wordCount(this.value);r.wpm=r.speak>5&&r.words?Math.round(r.words/(r.speak/60)):null;recPut(r)};
       el.appendChild(div)})})}
   list();
@@ -571,7 +572,7 @@ function actWriting(body,d,k,target,prompt,mode){
   function upd(){var n=wordCount(t.value);wc.textContent=n+" / "+target+" mots";wc.style.color=n>=target?"var(--green)":"var(--muted)"}
   function save(){state.writing["w"+d]={text:t.value,rewrite:r?r.value:""};persist();var n=wordCount(t.value);if(test){var ts=state.tests[String(d)]=state.tests[String(d)]||{};ts.words=n;renderTests()}if(n>=target&&(test||(r&&wordCount(r.value)>=target*0.8)))autoDone(d,k,test?"Essai enregistré ("+n+" mots)":"Écriture validée ✓")}
   t.oninput=upd;t.onchange=save;if(r)r.onchange=save;upd();
-  body.querySelector('[data-a="corr"]').onclick=function(){save();$("corrInput").value=t.value;$("corrKind").value="written text";$("corrInput").dispatchEvent(new Event("input"));setTab("corr");$("coach").scrollIntoView({behavior:"smooth"});toast("Texte placé dans l'outil de correction")};
+  body.querySelector('[data-a="corr"]').onclick=function(){save();$("corrInput").value=t.value;$("corrKind").value="written text";$("corrInput").dispatchEvent(new Event("input"));setTab("corr");goTo("tools","coach");toast("Texte placé dans l'outil de correction")};
 }
 
 /* ---- Oral ---- */
@@ -587,12 +588,12 @@ function actSpeaking(body,d,k,q,mode){
 var ws={day:0,k:""};
 var LEVEL_LINKS=[["British Council — écoutes B1","https://learnenglish.britishcouncil.org/free-resources/listening/b1"],["British Council — lectures B1","https://learnenglish.britishcouncil.org/free-resources/reading/b1"],["BBC Learning English","https://www.bbc.co.uk/learningenglish"],["Cambridge English","https://www.cambridgeenglish.org/"]];
 function linksHTML(ls){return '<div class="ai-links">'+ls.map(function(l){return '<a class="btn small ghost" href="'+l[1]+'" target="_blank" rel="noopener">'+esc(l[0])+' ↗</a>'}).join("")+'</div>'}
-function openActivity(d,k){ws={day:d,k:k};renderWorkshop();$("workshop").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}
-function closeWorkshop(){stopSpeak();ws={day:0,k:""};$("workshop").classList.add("hidden")}
+function openActivity(d,k){ws={day:d,k:k};document.body.classList.add("ws-open");renderWorkshop();$("wsScroll").scrollTop=0;updateNext()}
+function closeWorkshop(){stopSpeak();ws={day:0,k:""};$("workshop").classList.add("hidden");document.body.classList.remove("ws-open")}
 function renderWorkshop(){
   var d=ws.day,k=ws.k,panel=$("workshop"),body=$("wsBody");if(!d){panel.classList.add("hidden");return}
   stopSpeak();var q=questData(d).filter(function(x){return x.k===k})[0];if(!q){closeWorkshop();return}
-  panel.classList.remove("hidden");$("wsTitle").textContent=q.t;$("wsMeta").textContent="Jour "+d+" · "+q.m+" min";
+  panel.classList.remove("hidden");var allq=questData(d),qi=allq.indexOf(q);$("wsTitle").textContent=q.t;$("wsMeta").textContent="J"+d+" · bloc "+(qi+1)+" / "+allq.length+" · "+q.m+" min";$("wsProg").style.width=(doneCount(d)/allq.length*100)+"%";$("wsTimer").textContent="⏱ "+q.m+" min";$("wsTimer").classList.toggle("hidden",isLocked(d)||isDone(d,k));
   var W=weekContent(d),test=isTest(d),T=CONTENT.tests[d],st=STAGES[stageIdx(d)],target=parseInt(st.words,10)||100;
   var fallback='<div class="notice info">Pas de contenu intégré pour ce bloc. Utilise ces ressources, puis valide le bloc.</div>'+linksHTML(LEVEL_LINKS);
   if(test){
@@ -600,11 +601,11 @@ function renderWorkshop(){
     if(k==="Rd")return T?actReading(body,d,k,T.reading,"test"):(body.innerHTML=fallback);
     if(k==="S")return actSpeaking(body,d,k,q,"test");
     if(k==="W")return actWriting(body,d,k,TEST_WORDS[monthIdx(d)],q.d,"test");
-    body.innerHTML='<p class="tiny muted">'+esc(q.d)+'</p><button class="btn" id="goTest">Ouvrir le tableau de suivi</button>';$("goTest").onclick=function(){$("testPanel").scrollIntoView({behavior:"smooth"})};return;
+    body.innerHTML='<p class="tiny muted">'+esc(q.d)+'</p><button class="btn" id="goTest">Ouvrir le tableau de suivi</button>';$("goTest").onclick=function(){goTo("progress","testPanel")};return;
   }
   if(k==="R")return actCards(body,d,k);
   if(k==="S")return actSpeaking(body,d,k,q);
-  if(k==="B"){body.innerHTML='<p class="tiny muted">'+esc(q.d)+'</p><button class="btn" id="goAssess">Aller à l\'évaluation</button>';$("goAssess").onclick=function(){$("assessPanel").scrollIntoView({behavior:"smooth"})};return}
+  if(k==="B"){body.innerHTML='<p class="tiny muted">'+esc(q.d)+'</p><button class="btn" id="goAssess">Aller à l\'évaluation</button>';$("goAssess").onclick=function(){goTo("progress","assessPanel")};return}
   if(isWeekly(d)&&k==="Rd"){body.innerHTML='<p class="tiny muted">Lis ou écoute ce que tu veux. Quelques idées :</p>'+linksHTML([["BBC Learning English","https://www.bbc.co.uk/learningenglish"],["Project Gutenberg","https://www.gutenberg.org/"],["British Council — lectures","https://learnenglish.britishcouncil.org/free-resources/reading/b1"]])+'<button class="btn small" style="margin-top:10px" id="plaisirOk">C\'est fait</button>';$("plaisirOk").onclick=function(){autoDone(d,k)};return}
   if(k==="W")return actWriting(body,d,k,target,q.d);
   if(!W){body.innerHTML=fallback;return}
@@ -782,8 +783,14 @@ $("arenaGrid").addEventListener("click",function(e){var b=e.target.closest("[dat
 
 /* Enchaînement de la séance */
 function nextUndone(d){var qs=questData(d);for(var i=0;i<qs.length;i++)if(!isDone(d,qs[i].k))return qs[i].k;return null}
-function updateNext(){var b=$("wsNext");if(!ws.day){b.classList.add("hidden");return}var cur=isDone(ws.day,ws.k),n=nextUndone(ws.day);b.classList.toggle("hidden",!(cur&&n));if(n){var q=questData(ws.day).filter(function(x){return x.k===n})[0];b.textContent="Bloc suivant : "+q.t+" →"}}
-$("wsNext").addEventListener("click",function(){var n=nextUndone(ws.day);if(n)openActivity(ws.day,n)});
+function wsIndex(){var qs=questData(ws.day);for(var i=0;i<qs.length;i++)if(qs[i].k===ws.k)return i;return -1}
+function updateNext(){if(!ws.day)return;var qs=questData(ws.day),i=wsIndex(),b=$("wsNext"),pv=$("wsPrev");pv.disabled=i<=0;
+  if(i>=qs.length-1){b.textContent=nextUndone(ws.day)?"Bloc non terminé →":"✓ Terminer";b.classList.toggle("primary",true)}else{b.textContent="Suivant →";b.classList.toggle("primary",isDone(ws.day,ws.k))}
+  $("wsProg").style.width=(doneCount(ws.day)/qs.length*100)+"%"}
+$("wsNext").addEventListener("click",function(){var qs=questData(ws.day),i=wsIndex();if(i<qs.length-1){openActivity(ws.day,qs[i+1].k)}else{var n=nextUndone(ws.day);if(n)openActivity(ws.day,n);else{closeWorkshop();toast("Séance terminée ✓ Bravo !")}}});
+$("wsPrev").addEventListener("click",function(){var qs=questData(ws.day),i=wsIndex();if(i>0)openActivity(ws.day,qs[i-1].k)});
+$("wsTimer").addEventListener("click",function(){var i=wsIndex();if(i>=0){selectedDay=ws.day;startTimer(i)}});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&ws.day)closeWorkshop()});
 $("startSession").addEventListener("click",function(){var d=selectedDay,n=nextUndone(d);if(isLocked(d)){toast("Ce jour n'est pas encore ouvert.");return}if(!n){toast("Séance terminée ✓ Bravo !");return}openActivity(d,n)});
 
 /* =========== Accents variés =========== */
@@ -823,13 +830,13 @@ function openPlacement(){
      '<p class="tiny">Score global : '+Math.round(score*100)+' %. Recommandation : commencer au <b>jour '+start+'</b> (mois '+(monthIdx(start)+1)+' · '+esc(M.lvl)+' · '+esc(M.title)+').'+(start>1?' Les jours 1 à '+(start-1)+' seront marqués « dispensés » : tu pourras toujours les ouvrir pour réviser.':'')+(cando<=2&&start===31?' Ton oral limite le point de départ : c\'est la compétence à pousser en priorité.':'')+'</p>'+
      '<p class="tiny muted">Ce test donne une indication, pas une certification. Si les premières séances te semblent trop faciles ou trop difficiles, refais-le ou choisis un autre jour de départ dans les réglages.</p>'+
      '<div class="action-row"><button class="btn primary" data-p="apply">Commencer au jour '+start+'</button><button class="btn" data-p="day1">Commencer au jour 1</button></div>';
-    function apply(s){state.startOffset=s-1;state.startDate=isoDate(new Date());state.placement={date:todayISO(),score:Math.round(score*100),levels:lv,start:s};state.placementSeen=1;qCache={};persist();selectedDay=todayDay();box.classList.add("hidden");render();toast("C'est parti : jour "+todayDay()+" !");$("dayBanner").scrollIntoView({behavior:"smooth"})}
+    function apply(s){state.startOffset=s-1;state.startDate=isoDate(new Date());state.placement={date:todayISO(),score:Math.round(score*100),levels:lv,start:s};state.placementSeen=1;qCache={};persist();selectedDay=todayDay();box.classList.add("hidden");render();toast("C'est parti : jour "+todayDay()+" !");goTo("today")}
     box.querySelector('[data-p="apply"]').onclick=function(){apply(start)};box.querySelector('[data-p="day1"]').onclick=function(){apply(1)};
   }
   draw();box.scrollIntoView({behavior:"smooth",block:"start"});
 }
-$("placementBtn").addEventListener("click",function(){if(hasProgress(state)){$("placementWarn").classList.add("on");return}openPlacement()});
-$("placementGo").addEventListener("click",function(){$("placementWarn").classList.remove("on");openPlacement()});
+$("placementBtn").addEventListener("click",function(){if(hasProgress(state)){$("placementWarn").classList.add("on");return}showTab("today");openPlacement()});
+$("placementGo").addEventListener("click",function(){$("placementWarn").classList.remove("on");showTab("today");openPlacement()});
 $("placementNo").addEventListener("click",function(){$("placementWarn").classList.remove("on")});
 $("offsetSel").addEventListener("change",function(){var v=clamp(this.value,1,271);state.startOffset=v-1;qCache={};persist();selectedDay=todayDay();render();toast("Point de départ : jour "+v)});
 
@@ -918,6 +925,14 @@ $("ghDisconnect").addEventListener("click",function(){GH.token="";GH.gist="";ghS
 document.addEventListener("visibilitychange",function(){if(!document.hidden&&GH.token)ghPull()});
 
 
+
+/* =========== Onglets =========== */
+var curTab="today";
+function showTab(name){curTab=name;["today","arena","progress","tools","settings"].forEach(function(t){$("tab-"+t).classList.toggle("hidden",t!==name)});document.querySelectorAll("#tabbar [data-tab]").forEach(function(b){b.setAttribute("aria-selected",String(b.dataset.tab===name))});try{localStorage.setItem("englishSystem_tab",name)}catch(e){}if(name==="progress")renderStats();window.scrollTo(0,0)}
+function goTo(tab,id){if(ws.day)closeWorkshop();showTab(tab);if(id){var el=$(id);if(el)setTimeout(function(){el.scrollIntoView({behavior:"smooth",block:"start"})},60)}}
+$("tabbar").addEventListener("click",function(e){var b=e.target.closest("[data-tab]");if(b)showTab(b.dataset.tab)});
+document.addEventListener("click",function(e){var g=e.target.closest("[data-goto]");if(g)goTo(g.dataset.goto)});
+$("quests").addEventListener("click",function(e){if(e.target.closest("input,button,label"))return;var c=e.target.closest(".quest");if(!c)return;var cb=c.querySelector("[data-k]");if(cb&&!cb.disabled)openActivity(selectedDay,cb.dataset.k)});
 /* =========== Événements =========== */
 $("quests").addEventListener("change",function(e){var k=e.target.dataset.k;if(!k)return;var key=qKey(selectedDay,k);if(e.target.checked)state.quests[key]=1;else delete state.quests[key];persist();render()});
 $("quests").addEventListener("click",function(e){var b=e.target.closest("[data-timer]");if(b)startTimer(+b.dataset.timer)});
@@ -926,7 +941,7 @@ $("humanDone").addEventListener("change",function(){if(this.checked)state.human[
 $("prevDay").addEventListener("click",function(){selectedDay--;render()});
 $("nextDay").addEventListener("click",function(){selectedDay++;render()});
 $("todayBtn").addEventListener("click",function(){selectedDay=todayDay();render()});
-$("dayMap").addEventListener("click",function(e){var b=e.target.closest("[data-day]");if(b){selectedDay=+b.dataset.day;render();$("dayBanner").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}});
+$("dayMap").addEventListener("click",function(e){var b=e.target.closest("[data-day]");if(b){selectedDay=+b.dataset.day;render();goTo("today","dayBanner")}});
 $("saveAssessment").addEventListener("click",function(){var sc=[];for(var i=0;i<5;i++)sc.push(clamp($("sc"+i).value,1,5));state.assessments[String(selectedDay)]={scores:sc,felt:$("feltLevel").value,reflection:$("reflection").value,updatedAt:new Date().toISOString()};qCache={};persist();render();$("assessmentStatus").textContent="Bilan enregistré. L'adaptation s'applique dès demain."});
 $("saveTest").addEventListener("click",function(){state.tests[String(selectedDay)]={speak:numOrNull($("tSpeak").value,3600),hes:numOrNull($("tHes").value,500),listen:numOrNull($("tListen").value,100),read:numOrNull($("tRead").value,100),words:numOrNull($("tWords").value,3000),err:numOrNull($("tErr").value,500),note:$("tNote").value.trim().slice(0,300)};persist();renderTests();$("testStatus").textContent="Test enregistré."});
 $("candoList").addEventListener("change",function(e){var k=e.target.dataset.cando;if(!k)return;if(e.target.checked)state.cando[k]=1;else delete state.cando[k];persist();render()});
@@ -968,9 +983,10 @@ $("resList").innerHTML=RES.map(function(r){return r.g?'<div class="res-group">'+
 
 selectedDay=todayDay();
 render();ghUI();if(GH.token)ghPull();
+try{var lt=localStorage.getItem("englishSystem_tab");if(lt&&$("tab-"+lt))showTab(lt)}catch(e){}
 if(!state.placementSeen&&!hasProgress(state))setTimeout(openPlacement,300);
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-var APP_VERSION="9";
+var APP_VERSION="10";
 var swReg=null;
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
   var hadController=!!navigator.serviceWorker.controller,reloading=false;
