@@ -240,6 +240,24 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
 .diag-ic{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--f-mono)}
 .diag-row.ok .diag-ic{background:var(--green-bg);color:var(--green)}.diag-row.warn .diag-ic{background:var(--amber-bg);color:var(--amber)}.diag-row.bad .diag-ic{background:var(--red-bg);color:var(--red)}
 .diag-fix{color:var(--amber-text);margin-top:2px}
+.game-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.game-card{display:grid;gap:4px;text-align:left;border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:12px;color:var(--text);min-width:0}
+.game-card:hover{border-color:var(--blue)}.game-card.mission{border-color:var(--amber-line);box-shadow:inset 0 0 0 1px var(--amber-line)}
+.game-ic{font:700 20px var(--f-display);color:var(--cyan)}.game-n{font:600 14px var(--f-display);letter-spacing:.03em}
+.game-box{margin-top:14px;border:1px solid #2f6d99;border-radius:12px;padding:14px;background:var(--panel)}
+.game-hud{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:10px}
+.big-time{font-size:28px;color:var(--cyan)}
+.game-q{font:600 22px/1.35 var(--f-display);margin:8px 0 14px}.game-q.small{font-size:18px}
+.game-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.game-opts .btn{white-space:normal;text-align:left}
+.btn.big{font-size:20px;padding:16px}
+.built{min-height:48px;border:1px dashed var(--line2);border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;align-items:center}
+.tiles{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.tile{border:1px solid var(--btn-line);background:var(--btn-bg);color:var(--text);border-radius:8px;padding:8px 10px;font-size:15px}.tile.on{background:#103222;border-color:#24744b}
+.badge-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.badge{display:grid;gap:2px;border:1px solid var(--line);border-radius:10px;padding:9px;opacity:.45;filter:grayscale(1)}
+.badge.on{opacity:1;filter:none;border-color:var(--amber-line);background:var(--amber-bg)}
+.badge-ic{font-size:18px;color:var(--amber)}.badge-n{font:600 13px var(--f-display)}
+@media(max-width:600px){.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.game-opts{grid-template-columns:1fr}}
 .toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#0d2941;border:1px solid var(--blue);color:var(--text);padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:calc(100% - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .prompt-box{font:12px/1.5 var(--f-mono);min-height:120px}
@@ -291,7 +309,7 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
       <div id="dateLine">—</div>
     </div>
   </div>
-  <div class="action-row"><button class="btn" id="prevDay" aria-label="Jour précédent">←</button><button class="btn" id="todayBtn">Aujourd'hui</button><button class="btn primary" id="nextDay" aria-label="Jour suivant">→</button></div>
+  <div class="action-row"><button class="btn primary" id="startSession">▶ Commencer la séance</button><button class="btn" id="prevDay" aria-label="Jour précédent">←</button><button class="btn" id="todayBtn">Aujourd'hui</button><button class="btn" id="nextDay" aria-label="Jour suivant">→</button></div>
 </div>
 
 <div class="grid main-grid">
@@ -316,8 +334,15 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
   </section>
 
   <section class="panel hidden" id="workshop" aria-live="polite">
-    <div class="panel-head"><div><div class="eyebrow">Activité</div><h2 id="wsTitle">—</h2><div class="tiny muted" id="wsMeta"></div></div><button class="btn small ghost" id="wsClose">Fermer</button></div>
+    <div class="panel-head"><div><div class="eyebrow">Activité</div><h2 id="wsTitle">—</h2><div class="tiny muted" id="wsMeta"></div></div><div class="action-row"><button class="btn small primary hidden" id="wsNext">Bloc suivant →</button><button class="btn small ghost" id="wsClose">Fermer</button></div></div>
     <div id="wsBody"></div>
+  </section>
+
+  <section class="panel" id="arena">
+    <div class="panel-head"><h2>⚔ Arène des défis</h2><span class="pill num" id="arenaXP">0 / 60 XP aujourd'hui</span></div>
+    <p class="muted tiny">Des défis courts pour entraîner l'oreille, la prononciation et la spontanéité, en plus de la séance. La mission du jour rapporte double XP.</p>
+    <div class="game-grid" id="arenaGrid"></div>
+    <div class="game-box hidden" id="gameBox"></div>
   </section>
 
   <section class="panel" id="coach">
@@ -413,6 +438,11 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <div class="cando" id="candoList"></div>
   </section>
 
+  <section class="panel" id="badges">
+    <div class="panel-head"><h2>♛ Succès</h2><span class="pill num" id="badgeCount">0</span></div>
+    <div class="badge-grid" id="badgeGrid"></div>
+  </section>
+
   <section class="panel">
     <div class="panel-head"><h2>⚙ Réglages</h2></div>
     <div class="field"><label for="startDate">Date de début (jour 1)</label><input type="date" id="startDate"></div>
@@ -481,8 +511,8 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
   </div>
 </div>
 
-<script src="content-w01-05.js?v=6"></script>
-<script src="content-w06-09.js?v=6"></script>
-<script src="app.js?v=6"></script>
+<script src="content-w01-05.js?v=7"></script>
+<script src="content-w06-09.js?v=7"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>
