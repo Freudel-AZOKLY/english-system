@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>English System</title>
+<meta name="theme-color" content="#070b12">
+<meta name="description" content="Programme d'anglais A2 → C1 sur 300 jours, 2 h par jour.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="English">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout : HUD de jeu — bandeau de stats, séance du jour et coach au centre, protocole et outils en colonne latérale */
+:root{
+  --bg:#070b12;--panel:#0d1420;--panel2:#0a1320;--line:#23364b;--line2:#2a3c50;
+  --blue:#38bdf8;--blue2:#1676d2;--cyan:#7dd3fc;--text:#e7f0fb;--muted:#8ea3bb;--dim:#62788f;
+  --green:#4ade80;--green-bg:#0b1c19;--green-line:#1e6346;
+  --amber:#fbbf24;--amber-bg:#211b0c;--amber-text:#f7df9d;--amber-line:#6b5317;
+  --violet:#c4b5fd;--violet-bg:#171230;--violet-line:#4c3f8f;
+  --red:#fb7185;--red-bg:#2a121b;--red-line:#793747;
+  --btn-bg:#0d2941;--btn-line:#28608b;--btn-hover:#123c5c;--field:#08111d;--grid:#1c2a3b;
+  --f-display:"Chakra Petch","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --radius:14px;color-scheme:dark
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;background:radial-gradient(ellipse at 20% 0%,#10233a 0%,var(--bg) 48%) fixed,var(--bg);color:var(--text);font:15px/1.55 var(--f-body)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:1440px;margin:auto;padding-block:20px 110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:8px 0 20px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:14px;min-width:0}
+.sigil{flex:none;width:48px;height:48px;border:1px solid var(--blue);color:var(--blue);display:grid;place-items:center;font:700 23px var(--f-display);clip-path:polygon(0 0,75% 0,100% 25%,100% 100%,25% 100%,0 75%);box-shadow:0 0 24px #38bdf822}
+.eyebrow{font:600 11px var(--f-display);letter-spacing:.2em;text-transform:uppercase;color:var(--blue)}
+.brand h1{margin:0;font:700 clamp(21px,3vw,30px)/1.1 var(--f-display);letter-spacing:.08em}
+.sub{color:var(--muted);font-size:12px;font-family:var(--f-mono)}
+.header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pill{border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--muted);white-space:nowrap}
+.pill.ok{color:var(--green);border-color:var(--green-line)}.pill.warn{color:var(--amber);border-color:var(--amber-line)}
+.pill.boss{color:var(--amber);border-color:var(--amber-line);background:var(--amber-bg)}
+.pill.test{color:var(--violet);border-color:var(--violet-line);background:var(--violet-bg)}
+.btn{border:1px solid var(--btn-line);background:var(--btn-bg);color:#dff5ff;border-radius:10px;padding:9px 14px;font-weight:600;transition:background .15s,transform .15s}
+.btn:hover{background:var(--btn-hover)}.btn:active{transform:translateY(1px)}
+.btn.primary{background:linear-gradient(135deg,#1476bb,#174c91);border-color:var(--blue);color:#fff}
+.btn.danger{border-color:var(--red-line);background:var(--red-bg);color:#ffc2cd}
+.btn.ghost{background:transparent}
+.btn.small{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.grid{display:grid;gap:16px}
+.topgrid{grid-template-columns:1.3fr 1fr 1fr 1fr;margin-bottom:16px}
+.main-grid{grid-template-columns:minmax(0,1.45fr) minmax(300px,.85fr);align-items:start}
+.col{display:grid;gap:16px;min-width:0}
+.panel{background:linear-gradient(150deg,#101a29ee,#0b111bee);border:1px solid var(--line);border-radius:var(--radius);padding:18px;min-width:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.panel h2{font:600 15px var(--f-display);margin:0;letter-spacing:.08em;text-transform:uppercase}
+.panel h3{font:600 14px var(--f-display);letter-spacing:.04em;margin:0 0 8px}
+.muted{color:var(--muted)}.tiny{font-size:12px}
+p{margin:0 0 10px}
+.stat-label{color:var(--muted);font:600 11px var(--f-display);letter-spacing:.14em;text-transform:uppercase}
+.stat-value{font:700 26px/1.2 var(--f-mono);margin:6px 0}
+.stat-note{font-size:12px;color:var(--muted)}
+.rank-card{position:relative;overflow:hidden;background:linear-gradient(135deg,#102d48,#0d1420 72%);border-color:#24628a}
+.rank-card:after{content:"";position:absolute;right:-35px;top:-40px;width:145px;height:145px;border:1px solid #38bdf833;transform:rotate(45deg);box-shadow:0 0 0 15px #38bdf808,0 0 0 30px #38bdf805;pointer-events:none}
+.rank{font:700 25px var(--f-display);color:var(--cyan);letter-spacing:.08em}
+.progress{height:8px;background:var(--grid);border-radius:99px;overflow:hidden;margin:9px 0}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue2),var(--cyan));transition:width .3s}
+.progress.amber span{background:linear-gradient(90deg,#b7791f,var(--amber))}
+.stat-foot{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.day-banner{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;padding:16px;border:1px solid #21517b;background:linear-gradient(100deg,#102943,#0c1624);border-radius:13px;margin-bottom:16px}
+.day-banner.boss{border-color:#7a5b16;background:linear-gradient(100deg,#2a2109,#0c1624 70%)}
+.day-banner.test{border-color:var(--violet-line);background:linear-gradient(100deg,#1d1640,#0c1624 70%)}
+.day-number{font:700 28px var(--f-display);color:var(--cyan);letter-spacing:.04em}
+.boss .day-number{color:var(--amber)}.test .day-number{color:var(--violet)}
+.banner-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.banner-title strong{font:600 17px var(--f-display);letter-spacing:.03em}
+.banner-meta{display:grid;gap:3px;margin-top:6px;font-size:13px;color:var(--muted)}
+.banner-meta b{color:var(--text);font-weight:600}
+.topic-line{font-size:15px;color:var(--text)}
+.topic-line em{font-style:normal;color:var(--cyan)}
+.action-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.quest{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:12px 13px;margin-bottom:9px;display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:11px;align-items:start}
+.quest.done{border-color:var(--green-line);background:var(--green-bg)}
+.quest.focus{border-color:#2f6d99;box-shadow:inset 3px 0 0 var(--blue)}
+.quest.bossq{border-color:var(--amber-line);box-shadow:inset 3px 0 0 var(--amber)}
+.quest.testq{border-color:var(--violet-line);box-shadow:inset 3px 0 0 var(--violet)}
+.quest input[type=checkbox]{width:18px;height:18px;margin-top:3px;accent-color:var(--blue)}
+.quest-title{font-weight:600}
+.quest.done .quest-title{text-decoration:line-through;color:#91c7ae}
+.quest-desc{font-size:13px;color:var(--muted);margin-top:3px}
+.quest-desc .note{display:block;margin-top:5px;color:var(--cyan)}
+.quest-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.xp{font:700 11px var(--f-mono);color:var(--cyan);white-space:nowrap}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font:500 10px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-top:7px;margin-right:4px}
+.tag.focus{color:var(--cyan);border-color:#2f6d99}.tag.boss{color:var(--amber);border-color:var(--amber-line)}.tag.test{color:var(--violet);border-color:var(--violet-line)}
+.bonus{border:1px dashed var(--line2);border-radius:12px;padding:12px 13px;margin-top:4px;display:grid;gap:10px}
+.bonus-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.bonus-row label{font-size:13px;min-width:0;flex:1 1 260px}
+.bonus-row input[type=number]{width:90px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;min-width:0}
+.field label,.lbl{font-size:12px;color:var(--muted)}
+input[type=text],input[type=number],input[type=date],select,textarea{background:var(--field);border:1px solid var(--line2);border-radius:9px;padding:9px 10px;color:var(--text);width:100%}
+textarea{min-height:84px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:1px solid var(--blue);border-color:var(--blue)}
+.score-hint{font-size:11px;color:var(--dim)}
+.notice{border-left:3px solid var(--amber);padding:10px 12px;background:var(--amber-bg);color:var(--amber-text);font-size:13px;border-radius:0 8px 8px 0;margin:10px 0}
+.notice.info{border-color:var(--blue);background:#0b1d2e;color:#cfeaff}
+.notice.bad{border-color:var(--red);background:var(--red-bg);color:#ffc2cd}
+.resource{padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.resource strong{display:block;margin-bottom:2px;font-size:14px}
+.resource p{margin:0 0 6px;color:var(--muted);font-size:12px}
+.resource a{font-size:12px;font-weight:600}
+.res-list{display:grid;gap:8px}
+.res-group{font:600 11px var(--f-display);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:6px 0 0}
+.day-list{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:4px}
+.day-cell{position:relative;border:1px solid var(--line);border-radius:5px;min-height:28px;background:var(--panel2);color:var(--muted);font:500 10px var(--f-mono);padding:0}
+.day-cell.partial{background:#0f2433;border-color:#2b5675;color:#b5dcf3}
+.day-cell.done{background:#103222;border-color:#24744b;color:#a8f4c8}
+.day-cell.missed{border-color:#4a2733;color:#b7808f}
+.day-cell.locked{opacity:.4}
+.day-cell.today{outline:1px dashed var(--amber);outline-offset:1px}
+.day-cell.current{border-color:var(--blue);color:#fff;box-shadow:inset 0 0 0 1px var(--blue)}
+.day-cell.bossd:after{content:"";position:absolute;top:2px;right:2px;width:5px;height:5px;background:var(--amber);transform:rotate(45deg)}
+.day-cell.testd:after{content:"";position:absolute;top:2px;right:2px;width:6px;height:6px;background:var(--violet);border-radius:50%}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;color:var(--muted);margin-top:10px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+.level-list{display:grid;gap:6px}
+.level-row{display:grid;grid-template-columns:44px minmax(0,1fr) 64px;align-items:center;gap:10px;font-size:12px}
+.level-row .progress{margin:0}
+.level-row.now span:first-child{color:var(--cyan);font-weight:700}
+.cando{display:grid;gap:7px}
+.cando label{display:grid;grid-template-columns:20px 1fr;gap:8px;font-size:13px;align-items:start}
+.cando input{accent-color:var(--green);margin-top:3px}
+.err-list{display:grid;gap:7px;margin-top:10px;max-height:380px;overflow:auto}
+.err{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 10px;background:var(--panel2);font-size:13px}
+.err.review{border-color:var(--amber-line);background:var(--amber-bg)}
+.err-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.err-cols>div{min-width:0;overflow-wrap:anywhere}
+.err .wrong{color:var(--red);text-decoration:line-through;text-decoration-color:#fb718588}
+.err .right{color:var(--green)}
+.err .sent{color:var(--text)}
+.err .meta{font-size:11px;color:var(--dim);margin-top:4px;grid-column:1/-1}
+.colhead{font:600 10px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.chart-box{overflow-x:auto;margin-top:10px}
+.chart-box svg{display:block;width:100%;min-width:440px;height:auto}
+.table-box{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12px;min-width:560px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font:600 10px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td:first-child{font-family:var(--f-body)}
+td.up{color:var(--green)}td.down{color:var(--red)}
+.separator{border:0;border-top:1px solid var(--line);margin:16px 0}
+.confirm-zone{display:none;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.confirm-zone.on{display:flex}
+details summary{cursor:pointer;color:var(--cyan);font-size:13px;font-weight:600}
+details[open] summary{margin-bottom:8px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab{border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:9px;padding:7px 12px;font:600 13px var(--f-display);letter-spacing:.04em}
+.tab[aria-selected="true"]{border-color:var(--blue);color:var(--text);background:#0d2941}
+.chat{display:grid;gap:10px;max-height:460px;overflow:auto;padding:4px 2px 4px 0;margin-bottom:10px}
+.bubble{max-width:88%;padding:10px 12px;border-radius:12px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble.ai{background:#0f2238;border:1px solid #21517b;justify-self:start;border-bottom-left-radius:4px}
+.bubble.me{background:#12291f;border:1px solid var(--green-line);justify-self:end;border-bottom-right-radius:4px}
+.fb{justify-self:end;max-width:88%;font-size:12px;color:var(--amber-text);background:var(--amber-bg);border:1px dashed var(--amber-line);border-radius:10px;padding:8px 10px;white-space:pre-wrap;overflow-wrap:anywhere}
+.result{display:grid;gap:12px;margin-top:12px}
+.result-block{border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--panel2);font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.corr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;border:1px solid var(--line);border-radius:9px;padding:9px 10px;background:var(--panel2);font-size:13px;overflow-wrap:anywhere}
+.corr.opt{border-style:dashed}
+.corr .why{color:var(--muted);font-size:12px;margin-top:3px}
+.corr .ex{color:var(--text);font-size:12px;margin-top:3px}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--line2);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-width:84ch;margin:auto}
+.timerbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:#0b1626f2;border-top:1px solid #2f6d99;backdrop-filter:blur(8px);padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.timer-inner{max-width:1440px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center}
+.timer-time{font:700 26px var(--f-mono);color:var(--cyan)}
+.timer-name{font:600 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase}
+.timerbar .progress{margin:6px 0 0}
+.hidden{display:none!important}
+@media(max-width:1050px){.topgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.main-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){
+  .topgrid{gap:9px}.panel{padding:14px}.stat-value{font-size:21px}.rank{font-size:20px}
+  .day-banner{grid-template-columns:minmax(0,1fr)}
+  .two,.three,.err-cols{grid-template-columns:1fr}
+  .day-list{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .quest{grid-template-columns:22px minmax(0,1fr)}.quest-side{grid-column:2;flex-direction:row;align-items:center;justify-content:flex-start}
+  .timer-inner{grid-template-columns:minmax(0,1fr) auto}.timer-actions{grid-column:1/-1}
+  .bubble,.fb{max-width:96%}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.ai-links{display:flex;gap:8px;flex-wrap:wrap}
+#workshop{border-color:#2f6d99}
+.step{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+.step-n{width:24px;height:24px;border-radius:50%;border:1px solid var(--blue);color:var(--cyan);display:grid;place-items:center;font:700 12px var(--f-mono)}
+.mcq{border:1px solid var(--line);border-radius:9px;padding:8px 12px;margin:8px 0;min-width:0}
+.mcq legend{font-size:13px;padding:0 4px}
+.mcq label{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:3px 0;cursor:pointer}
+.mcq.good{border-color:var(--green-line);background:var(--green-bg)}.mcq.bad{border-color:var(--red-line);background:var(--red-bg)}
+.transcript{margin-top:8px;border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--panel2);font-size:14px}
+.transcript p{margin:0 0 6px}.sent{cursor:pointer;border-radius:4px}.sent:hover,.sent:focus{background:#123c5c;outline:none}
+.dict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;margin:8px 0}
+.dict-res{grid-column:2}.ok{color:var(--green)}.ko{color:var(--red);text-decoration:underline}
+.reading{font-size:15px;line-height:1.7;max-width:70ch}.reading p{margin:0 0 12px}
+.gloss{margin:6px 0 0;padding-left:18px;font-size:13px}
+.lesson{border-left:3px solid var(--blue);background:#0b1d2e;padding:10px 12px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.6}
+.gline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0;font-size:14px}
+.gline input{width:min(220px,100%)}.gline input.good{border-color:var(--green)}.gline input.bad{border-color:var(--red)}
+.gres{color:var(--muted)}
+.vocab{display:grid;gap:6px}.vrow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;font-size:13px}
+.card-srs{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--panel2);display:grid;gap:10px}
+.card-front{font:600 22px/1.3 var(--f-display);letter-spacing:.02em}
+.card-ans{font-size:18px;color:var(--green)}
+.shadow-sent{font-size:20px;line-height:1.5;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);margin:10px 0}
+.rec-box{border:1px dashed var(--line2);border-radius:10px;padding:10px 12px;margin-top:8px;display:grid;gap:8px}
+.rec-box.live{border-color:var(--red);border-style:solid}
+.rec-btn{color:#ffc2cd}
+.rec-time{color:var(--cyan)}
+.rec-level{display:inline-block;width:90px;height:6px;background:var(--grid);border-radius:9px;overflow:hidden}.rec-level span{display:block;height:100%;width:0;background:var(--green)}
+.rec-list{display:grid;gap:8px}.rec-item{border:1px solid var(--line);border-radius:9px;padding:8px 10px;display:grid;gap:6px;background:var(--panel)}
+.rec-item audio{width:100%}.rec-tr{min-height:60px;font-size:13px}
+.toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#0d2941;border:1px solid var(--blue);color:var(--text);padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.prompt-box{font:12px/1.5 var(--f-mono);min-height:120px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="brand"><div class="sigil" aria-hidden="true">E</div><div><div class="eyebrow">Player development protocol // v3.0</div><h1>ENGLISH SYSTEM</h1><div class="sub">A2 → C1 · 300 JOURS · 2 H/JOUR · 4 COMPÉTENCES</div></div></div>
+  <div class="header-right"><span class="pill" id="saveStatus">● Enregistré sur cet appareil</span><a class="btn small ghost" href="#data">Mes données</a></div>
+</header>
+
+<div class="grid topgrid">
+  <section class="panel rank-card" aria-label="Rang">
+    <div class="stat-label">Rang actuel</div>
+    <div class="rank" id="rankName">E-RANK</div>
+    <div class="stat-note" id="rankSub">Le protocole commence.</div>
+    <div class="progress"><span id="rankProgress"></span></div>
+    <div class="stat-foot"><span class="num" id="rankXP">0 XP</span><span id="nextRank">Prochain : D-RANK</span></div>
+  </section>
+  <section class="panel" aria-label="Campagne">
+    <div class="stat-label">Campagne</div>
+    <div class="stat-value">J<span id="todayStat">1</span><span class="muted"> / 300</span></div>
+    <div class="progress"><span id="dayProgress"></span></div>
+    <div class="stat-note" id="daySub">0 jour complet</div>
+  </section>
+  <section class="panel" aria-label="Heures">
+    <div class="stat-label">Heures d'anglais</div>
+    <div class="stat-value"><span id="hoursStat">0</span><span class="muted"> / 600 h</span></div>
+    <div class="progress amber"><span id="hoursProgress"></span></div>
+    <div class="stat-note" id="hoursSub">Objectif 550 à 600 h</div>
+  </section>
+  <section class="panel" aria-label="Série">
+    <div class="stat-label">Série</div>
+    <div class="stat-value"><span id="streakStat">0</span><span class="muted"> j</span></div>
+    <div class="stat-note" id="streakSub">Record : 0 jour</div>
+    <div class="stat-note" id="xpStat" style="margin-top:4px">XP total : 0</div>
+  </section>
+</div>
+
+<div class="day-banner" id="dayBanner">
+  <div style="min-width:0">
+    <div class="eyebrow" id="bannerEyebrow">Séance du jour</div>
+    <div class="banner-title"><span class="day-number" id="bannerDay">DAY 001</span><strong id="phaseTitle">—</strong><span class="pill boss hidden" id="bossPill">◆ Épreuve hebdo</span><span class="pill test hidden" id="testPill">● Test mensuel</span></div>
+    <div class="banner-meta">
+      <div class="topic-line" id="topicWrap">Sujet : <em>—</em></div>
+      <div>Grammaire de la semaine : <b id="grammarLine">—</b></div>
+      <div id="dateLine">—</div>
+    </div>
+  </div>
+  <div class="action-row"><button class="btn" id="prevDay" aria-label="Jour précédent">←</button><button class="btn" id="todayBtn">Aujourd'hui</button><button class="btn primary" id="nextDay" aria-label="Jour suivant">→</button></div>
+</div>
+
+<div class="grid main-grid">
+<div class="col">
+  <section class="panel">
+    <div class="panel-head"><h2>▣ Séance du jour</h2><span class="pill num" id="questCount">0 / 7</span></div>
+    <div class="notice hidden" id="lockNotice"></div>
+    <div class="notice info hidden" id="focusNotice"></div>
+    <div id="quests"></div>
+    <div class="progress"><span id="questProgress"></span></div>
+    <div class="stat-foot"><span class="num" id="minutesGoal">0 / 120 min</span><span class="num" id="questXP">+0 XP restants</span></div>
+    <div class="bonus">
+      <div class="bonus-row">
+        <label for="immersionMin">Immersion libre (téléphone en anglais, séries sans sous-titres français, podcasts). C'est un bonus : elle ne remplace pas la séance.</label>
+        <div class="action-row"><input type="number" id="immersionMin" min="0" max="600" step="5" value="0" inputmode="numeric"><span class="muted tiny">min</span></div>
+      </div>
+      <div class="bonus-row">
+        <label><input type="checkbox" id="humanDone" style="accent-color:var(--amber)"> Conversation de 20 min avec une vraie personne : 2 min de small talk, 8 min de sujet, 5 min de questions, 5 min pour noter les corrections.</label>
+        <span class="xp">+40 XP</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="workshop" aria-live="polite">
+    <div class="panel-head"><div><div class="eyebrow">Activité</div><h2 id="wsTitle">—</h2><div class="tiny muted" id="wsMeta"></div></div><button class="btn small ghost" id="wsClose">Fermer</button></div>
+    <div id="wsBody"></div>
+  </section>
+
+  <section class="panel" id="coach">
+    <div class="panel-head"><h2>✦ Prompts pour ton IA</h2><span class="pill">copier-coller</span></div>
+    <p class="muted tiny">L'app prépare la consigne complète, adaptée à ton niveau et au sujet du jour. Copie-la, puis colle-la dans l'assistant IA de ton choix. Vérifie les explications importantes dans le Cambridge Dictionary.</p>
+    <div class="tabs" role="tablist"><button class="tab" role="tab" id="tabCorr" aria-selected="true" aria-controls="paneCorr">Correction de texte</button><button class="tab" role="tab" id="tabChat" aria-selected="false" aria-controls="paneChat">Partenaire de conversation</button></div>
+    <div id="paneCorr" role="tabpanel" aria-labelledby="tabCorr">
+      <div class="two">
+        <div class="field"><label for="corrKind">Type de texte</label><select id="corrKind"><option value="written text">Texte écrit</option><option value="transcript of spoken English">Transcription orale</option></select></div>
+        <div class="field"><label for="corrTarget">Version améliorée visée</label><select id="corrTarget"><option>B1</option><option>B2</option><option selected>C1</option></select></div>
+      </div>
+      <div class="field"><label for="corrInput">Ton texte</label><textarea id="corrInput" style="min-height:140px" placeholder="Yesterday I have worked on my thesis and I am agree that the results depends of the data…"></textarea><span class="score-hint num" id="corrWords">0 mot</span></div>
+      <div class="action-row"><button class="btn primary" id="corrBtn">Copier la demande de correction</button><span class="tiny muted" id="corrStatus"></span></div>
+      <p class="tiny muted" style="margin-top:10px">Ensuite, reporte les erreurs importantes dans ton carnet ci-dessous, avec une nouvelle phrase à toi.</p>
+    </div>
+    <div id="paneChat" role="tabpanel" aria-labelledby="tabChat" class="hidden">
+      <div class="field"><label for="chatScenario">Scénario</label><select id="chatScenario"></select></div>
+      <div class="action-row"><button class="btn primary" id="chatBtn">Copier le prompt du scénario</button><button class="btn ghost" id="chatEndBtn">Copier le prompt de bilan</button><span class="tiny muted" id="chatStatus"></span></div>
+      <p class="tiny muted" style="margin-top:10px">Pour travailler l'oral, utilise le mode vocal de l'assistant s'il en a un, ou réponds avec la dictée vocale de ton clavier. À la fin, colle le prompt de bilan dans la même conversation pour obtenir la liste de tes erreurs récurrentes.</p>
+    </div>
+    <div class="field hidden" id="promptBox" style="margin-top:12px"><label for="promptOut">Prompt prêt (si la copie automatique ne marche pas, sélectionne-le)</label><textarea id="promptOut" class="prompt-box" readonly></textarea></div>
+    <div class="ai-links" style="margin-top:10px"><span class="tiny muted" style="align-self:center">Ouvrir :</span><a class="btn small ghost" href="https://chatgpt.com/" target="_blank" rel="noopener">ChatGPT ↗</a><a class="btn small ghost" href="https://gemini.google.com/" target="_blank" rel="noopener">Gemini ↗</a><a class="btn small ghost" href="https://chat.mistral.ai/" target="_blank" rel="noopener">Le Chat ↗</a><a class="btn small ghost" href="https://claude.ai/new" target="_blank" rel="noopener">Claude ↗</a></div>
+  </section>
+
+  <section class="panel" id="assessPanel">
+    <div class="panel-head"><h2>◈ Évaluation hebdo</h2><span class="pill">jours 7, 14, 21…</span></div>
+    <p class="muted tiny">Note-toi après avoir réécouté ton épreuve. Ta compétence la plus faible reçoit 10 min de plus pendant les 7 jours suivants, prises sur le shadowing et la révision. Si tout est à 4 ou plus, l'oral passe en mode difficile.</p>
+    <div class="two">
+      <div class="field"><label for="sc0">Expression orale / 5</label><input type="number" min="1" max="5" id="sc0" value="3"><span class="score-hint">1 = phrases isolées · 3 = parle sans script, avec erreurs · 5 = fluide, précis, nuancé</span></div>
+      <div class="field"><label for="sc1">Compréhension orale / 5</label><input type="number" min="1" max="5" id="sc1" value="3"><span class="score-hint">1 = mots clés · 3 = l'essentiel d'un audio B1 · 5 = débit natif, accents variés</span></div>
+      <div class="field"><label for="sc2">Lecture / 5</label><input type="number" min="1" max="5" id="sc2" value="3"><span class="score-hint">1 = textes adaptés · 3 = articles courts · 5 = textes complexes, idées implicites</span></div>
+      <div class="field"><label for="sc3">Écriture / 5</label><input type="number" min="1" max="5" id="sc3" value="3"><span class="score-hint">1 = phrases simples · 3 = paragraphe cohérent · 5 = argumentation structurée, bon registre</span></div>
+      <div class="field"><label for="sc4">Précision grammaticale / 5</label><input type="number" min="1" max="5" id="sc4" value="3"><span class="score-hint">1 = erreurs bloquantes · 3 = erreurs fréquentes mais claires · 5 = rares</span></div>
+      <div class="field"><label for="feltLevel">Niveau ressenti</label><select id="feltLevel"><option>A2</option><option>A2+</option><option>B1</option><option>B1+</option><option>B2</option><option>B2+</option><option>C1</option></select></div>
+    </div>
+    <div class="field"><label for="reflection">Les 4 questions du bilan</label><textarea id="reflection" placeholder="1. Qu'est-ce que je comprends aujourd'hui que je ne comprenais pas la semaine dernière ?&#10;2. Quelles erreurs est-ce que je continue à faire ?&#10;3. Est-ce que je parle plus longtemps, avec moins d'hésitations ?&#10;4. Quelle compétence me ralentit le plus ?"></textarea></div>
+    <div class="action-row"><button class="btn primary" id="saveAssessment">Enregistrer le bilan</button><span class="muted tiny" id="assessmentStatus">Aucun bilan pour ce jour.</span></div>
+    <hr class="separator">
+    <h3>Conseil adaptatif</h3>
+    <div id="adaptiveAdvice" class="notice info">Fais ton premier bilan au jour 7 pour activer l'adaptation.</div>
+    <h3 style="margin-top:14px">Courbe des bilans</h3>
+    <div class="chart-box" id="chartBox"></div>
+  </section>
+
+  <section class="panel" id="testPanel">
+    <div class="panel-head"><h2>● Tests mensuels</h2><span class="pill">jours 30, 60, 90…</span></div>
+    <p class="muted tiny">Chaque mois, mêmes mesures et mêmes conditions. Le niveau se mesure, il ne se déduit pas des heures. Parler longtemps avec des erreurs systématiques ne vaut pas parler avec précision.</p>
+    <div id="testForm" class="hidden">
+      <div class="three">
+        <div class="field"><label for="tSpeak">Parole continue (secondes)</label><input type="number" id="tSpeak" min="0" max="3600"></div>
+        <div class="field"><label for="tHes">Hésitations longues (nombre)</label><input type="number" id="tHes" min="0" max="500"></div>
+        <div class="field"><label for="tListen">Écoute, audio inconnu (%)</label><input type="number" id="tListen" min="0" max="100"></div>
+        <div class="field"><label for="tRead">Lecture, texte inconnu (%)</label><input type="number" id="tRead" min="0" max="100"></div>
+        <div class="field"><label for="tWords">Écriture : mots rédigés</label><input type="number" id="tWords" min="0" max="3000"></div>
+        <div class="field"><label for="tErr">Écriture : erreurs relevées</label><input type="number" id="tErr" min="0" max="500"></div>
+      </div>
+      <div class="field"><label for="tNote">Erreurs grammaticales récurrentes repérées</label><input type="text" id="tNote" placeholder="ex. present perfect, prépositions après depend / interested"></div>
+      <div class="action-row"><button class="btn primary" id="saveTest">Enregistrer le test</button><span class="tiny muted" id="testStatus"></span></div>
+      <hr class="separator">
+    </div>
+    <div class="table-box" id="testTable"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>✕ My English Mistakes</h2><span class="pill num" id="errCount">0</span></div>
+    <p class="muted tiny">L'habitude la plus importante du programme. Pour chaque erreur : la forme fautive, la correction, et une nouvelle phrase à toi qui utilise la bonne forme. Chaque soir, relis 5 erreurs.</p>
+    <div class="err-cols">
+      <div class="field"><label for="errWrong">Mon erreur</label><input type="text" id="errWrong" placeholder="It depends of the situation."></div>
+      <div class="field"><label for="errRight">Correction</label><input type="text" id="errRight" placeholder="It depends on the situation."></div>
+      <div class="field"><label for="errSent">Nouvelle phrase</label><input type="text" id="errSent" placeholder="The outcome depends on several factors."></div>
+    </div>
+    <div class="action-row"><select id="errCat" aria-label="Catégorie de l'erreur" style="width:auto"><option value="grammaire">Grammaire</option><option value="mot">Choix du mot</option><option value="collocation">Collocation</option><option value="ordre">Ordre des mots</option><option value="prononciation">Prononciation</option><option value="registre">Registre</option></select><button class="btn" id="addErr">Ajouter</button><button class="btn ghost" id="reviewBtn">Révision du soir (5)</button><button class="btn small primary hidden" id="reviewDone">J'ai révisé ces 5</button><span class="muted tiny" id="errStatus"></span></div>
+    <div class="err-list" id="errList"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>▦ Carte de progression</h2><span class="pill">300 jours · 43 semaines · 10 mois</span></div>
+    <div class="day-list" id="dayMap"></div>
+    <div class="legend"><span><i style="background:#103222;border-color:#24744b"></i>Complet</span><span><i style="background:#0f2433;border-color:#2b5675"></i>Partiel</span><span><i style="border-color:#4a2733"></i>Manqué</span><span><i style="border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)"></i>Sélectionné</span><span><i style="outline:1px dashed var(--amber);border:0"></i>Aujourd'hui</span><span style="color:var(--amber)">◆ Épreuve hebdo</span><span style="color:var(--violet)">● Test mensuel</span></div>
+  </section>
+</div>
+
+<aside class="col">
+  <section class="panel">
+    <div class="panel-head"><h2>◉ Protocole du mois</h2><span class="pill" id="phasePill">MOIS 01</span></div>
+    <h3 id="phaseHeading">—</h3>
+    <p class="muted tiny" id="phaseDescription"></p>
+    <div class="level-list" id="phaseLevels"></div>
+    <hr class="separator">
+    <h3>Objectif du mois</h3>
+    <p class="muted tiny" id="workTarget"></p>
+    <h3 style="margin-top:12px">Je peux… <span class="muted tiny" id="candoCount"></span></h3>
+    <div class="cando" id="candoList"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>⚙ Réglages</h2></div>
+    <div class="field"><label for="startDate">Date de début (jour 1)</label><input type="date" id="startDate"></div>
+    <div class="field"><label for="track">Parcours des sujets</label><select id="track"><option value="acad">Académique & recherche (économétrie, data)</option><option value="pro">Professionnel (entreprise, entretiens)</option></select></div>
+    <label class="tiny" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="freeMode"> Mode libre : débloquer les jours à venir</label>
+    <hr class="separator">
+    <h3>Voix et micro</h3>
+    <div class="field"><label for="voiceSel">Voix anglaise pour les écoutes</label><select id="voiceSel"><option value="">Automatique</option></select></div>
+    <div class="two">
+      <div class="field"><label for="rateSel">Vitesse</label><select id="rateSel"><option value="0.75">0,75</option><option value="0.9">0,9</option><option value="1">1 (naturelle)</option><option value="1.1">1,1</option></select></div>
+      <div class="field"><label for="langSel">Accent</label><select id="langSel"><option value="en-GB">Britannique</option><option value="en-US">Américain</option></select></div>
+    </div>
+    <label class="tiny" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="srToggle"> Transcription automatique de mes enregistrements</label>
+    <p class="tiny muted" id="srNote" style="margin-top:6px">La transcription utilise la reconnaissance vocale de ton navigateur. Sur Chrome et Edge, l'audio est envoyé au service de Google ou Microsoft pour être transcrit. Tes enregistrements, eux, restent sur l'appareil.</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>◎ Journal</h2><span class="pill" id="journalDay">J1</span></div>
+    <div class="field"><label for="journal">Notes du jour</label><textarea id="journal" placeholder="Nouvelle expression, erreur corrigée, sujet à retravailler…"></textarea></div>
+    <div class="field"><label for="customGoal">Micro-objectif</label><input type="text" id="customGoal" placeholder="Ex. présenter mon mémoire en 90 secondes"></div>
+    <div class="action-row"><button class="btn" id="saveJournal">Enregistrer</button><span class="muted tiny" id="journalStatus"></span></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2>↗ Arsenal gratuit</h2><span class="pill">6 outils max</span></div>
+    <div class="res-list" id="resList"></div>
+  </section>
+
+  <section class="panel" id="data">
+    <div class="panel-head"><h2>⇅ Mes données</h2></div>
+    <p class="muted tiny" id="syncExplain">Tes données restent sur cet appareil, et nulle part ailleurs. Pour passer de l'ordinateur au téléphone : exporte ici, puis importe le fichier sur l'autre appareil.</p>
+    <div class="notice hidden" id="exportReminder"></div>
+    <div class="action-row"><button class="btn primary" id="shareBtn">Envoyer vers un autre appareil</button><button class="btn" id="exportBtn">Télécharger (.json)</button><button class="btn ghost" id="showJsonBtn">Afficher le JSON</button></div>
+    <div class="field hidden" id="jsonOutBox" style="margin-top:10px"><label for="jsonOut">Sauvegarde (copie-la dans un fichier)</label><textarea id="jsonOut" readonly style="min-height:120px;font:12px var(--f-mono)"></textarea><button class="btn small" id="copyJson">Copier</button></div>
+    <hr class="separator">
+    <h3>Importer une sauvegarde</h3>
+    <div class="field"><label for="importFile">Fichier .json (versions 1, 2 et 3)</label><input type="file" id="importFile" accept="application/json,.json"></div>
+    <details><summary>…ou coller le JSON</summary><div class="field"><textarea id="importText" style="font:12px var(--f-mono)" aria-label="JSON à importer"></textarea></div><button class="btn small" id="importTextBtn">Importer le texte</button></details>
+    <div class="confirm-zone" id="undoZone"><span class="tiny" style="color:var(--green)" id="undoLabel">Import réussi.</span><button class="btn small" id="undoBtn">Annuler</button></div>
+    <p class="tiny" id="importStatus" style="margin-top:8px"></p>
+    <hr class="separator">
+    <button class="btn danger small" id="resetBtn">Réinitialiser…</button>
+    <div class="confirm-zone" id="resetZone"><span class="tiny" style="color:var(--red)">Tout effacer ? Exporte d'abord.</span><button class="btn danger small" id="resetConfirm">Oui, effacer</button><button class="btn small" id="resetCancel">Annuler</button></div>
+  </section>
+</aside>
+</div>
+<footer>ENGLISH SYSTEM v3.0 · Aucune certification officielle. Le C1 se valide par un examen (Cambridge C1 Advanced, IELTS 7+). Ce calendrier est un objectif de progression : si un test mensuel montre qu'une compétence reste en retard, ralentis plutôt que de faire semblant. Application autonome : aucun compte. Tes données et tes enregistrements restent sur ton appareil (seule la transcription automatique, si tu l'actives, passe par le service de ton navigateur). Contenu d'écoute et de lecture original, lu par les voix de ton appareil.</footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div class="timerbar hidden" id="timerBar" role="region" aria-label="Minuteur">
+  <div class="timer-inner">
+    <div style="min-width:0"><div class="timer-name" id="timerName">—</div><div class="progress"><span id="timerProgress"></span></div></div>
+    <div class="timer-time" id="timerTime">00:00</div>
+    <div class="action-row timer-actions"><button class="btn small" id="timerPause">Pause</button><button class="btn small primary hidden" id="timerValidate">Valider le bloc</button><button class="btn small ghost" id="timerStop">Fermer</button></div>
+  </div>
+</div>
+
+<script src="content-w01-05.js"></script>
+<script src="content-w06-09.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
