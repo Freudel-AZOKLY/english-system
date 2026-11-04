@@ -25,6 +25,16 @@ Sur iPhone, installe-la bien sur l'écran d'accueil : Safari peut effacer les do
 
 Contenu intégré : les 300 jours (43 semaines d'écoutes, de lectures, de grammaire et de vocabulaire, du niveau A2 au C1) et les 10 tests mensuels.
 
+## Nouveautés de la version 14
+
+- **Parcours général** (vie quotidienne, voyages, culture, actualité) pour toute personne qui utilise l'app : 100 sujets, objectifs mensuels, donjons et scénarios de conversation adaptés. Choix proposé à la création du profil et dans les réglages
+- **Vraie écoute du jour** à la fin de chaque écoute : un podcast en voix natives choisi selon ton palier (BBC Learning English, 6 Minute English, BBC World Service…), avec une consigne précise. Podcasts aussi listés dans Ressources
+- **Visite guidée** au premier lancement (7 étapes), à revoir depuis les réglages
+- **Rappel de sauvegarde** sur la page du jour si tu n'as pas sauvegardé depuis 7 jours, avec un bouton qui envoie la sauvegarde vers Fichiers, iCloud Drive ou Google Drive
+- **Affichage** : taille du texte (4 tailles) et thème clair, sombre ou comme l'appareil
+- **Examen blanc C1** (Progrès → Bilans) sur le modèle du C1 Advanced : Use of English (30 questions), Reading, Listening, Writing et Speaking, minuteur, reprise possible, score estimé sur l'échelle Cambridge et corrigé détaillé. Contenu original relu par un correcteur indépendant
+- Diagnostic : bouton « Copier le rapport » pour envoyer le résultat
+
 ## Nouveautés de la version 13
 
 - Sous-onglets dans Progrès (Statut, Stats, Programme, Bilans, Titres), Outils (Correcteur IA, Carnet, Journal, Ressources) et Réglages (Profil, Réglages, Données, Diagnostic) : plus besoin de faire défiler des pages très longues. Le dernier sous-onglet ouvert est retenu

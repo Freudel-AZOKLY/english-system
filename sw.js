@@ -1,6 +1,6 @@
 /* English System : fonctionnement hors ligne */
-var CACHE = "english-system-v13";
-var CORE = ["./", "index.html", "app.js", "content-w01-05.js", "content-w06-09.js", "content-w10-15.js", "content-w16-21.js", "content-w22-27.js", "content-w28-33.js", "content-w34-38.js", "content-w39-43.js", "content-tests.js", "placement-data.js", "launcher.js", "logo.svg", "icon-maskable-512.png", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
+var CACHE = "english-system-v14";
+var CORE = ["./", "index.html", "app.js", "content-w01-05.js", "content-w06-09.js", "content-w10-15.js", "content-w16-21.js", "content-w22-27.js", "content-w28-33.js", "content-w34-38.js", "content-w39-43.js", "content-tests.js", "placement-data.js", "exam-c1.js", "launcher.js", "logo.svg", "icon-maskable-512.png", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));
 });

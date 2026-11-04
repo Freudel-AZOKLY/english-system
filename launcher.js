@@ -1,7 +1,7 @@
 /* English System : écran de lancement, profils locaux, chargement de l'app */
 (function(){
 "use strict";
-var REG="englishSystem_profiles",DEV="englishSystem_device",PFX="englishSystem_v3_",APPV="13";
+var REG="englishSystem_profiles",DEV="englishSystem_device",PFX="englishSystem_v3_",APPV="14";
 var CLASSES=window.ES_CLASSES=["Chercheuse","Chercheur","Analyste","Stratège","Exploratrice","Explorateur","Oratrice","Orateur","Bâtisseuse","Bâtisseur"];
 var RANKS=["E-RANK","D-RANK","C-RANK","B-RANK","A-RANK","S-RANK","NATIONAL LEVEL","SOVEREIGN // C1"];
 var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -78,7 +78,7 @@ function create(back){
   show(logo("sm")+'<div class="bt-eyebrow">[ SYSTÈME ] Enregistrement du joueur</div><h1 class="bt-h">Crée ton profil</h1>'+
   '<form data-b="form" novalidate><div class="field"><label for="btName">Ton prénom ou pseudo</label><input type="text" id="btName" maxlength="30" autocomplete="nickname" required autofocus placeholder="Ex. Irène"></div>'+
   '<div class="field"><label for="btClass">Ta classe</label><select id="btClass">'+CLASSES.map(function(c){return '<option>'+esc(c)+'</option>'}).join("")+'</select><span class="tiny muted">Pour le style : tu peux la changer à tout moment.</span></div>'+
-  '<div class="field"><label>Tes sujets</label><div class="bt-seg"><label><input type="radio" name="btTrack" value="acad" checked><span>🎓 Études & recherche</span></label><label><input type="radio" name="btTrack" value="pro"><span>💼 Travail & entreprise</span></label></div></div>'+
+  '<div class="field"><label>Tes sujets</label><div class="bt-seg"><label><input type="radio" name="btTrack" value="acad"><span>🎓 Études & recherche</span></label><label><input type="radio" name="btTrack" value="pro"><span>💼 Travail & entreprise</span></label><label class="wide"><input type="radio" name="btTrack" value="gen" checked><span>🌍 Général : vie quotidienne, voyages, culture, actualité</span></label></div></div>'+
   '<div class="field"><label>Pour commencer</label><div class="bt-seg col"><label><input type="radio" name="btStart" value="pl" checked><span><b>Test de positionnement</b> (recommandé, 15 à 20 min) : le Système choisit ton point de départ.</span></label><label><input type="radio" name="btStart" value="d1"><span><b>Commencer au jour 1</b> : niveau A2, tu pourras faire le test plus tard.</span></label></div></div>'+
   '<p class="bt-err tiny" data-b="err" role="alert"></p><div class="bt-actions"><button class="btn primary bt-big" type="submit">Entrer dans le Système</button>'+(back?'<button class="btn ghost" type="button" data-b="back">← Retour</button>':'')+'</div></form>');
   var bk=q('[data-b="back"]');if(bk)bk.onclick=back;
