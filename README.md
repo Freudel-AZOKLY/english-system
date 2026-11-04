@@ -23,7 +23,7 @@ Sur iPhone, installe-la bien sur l'écran d'accueil : Safari peut effacer les do
 - Tests mensuels qui se remplissent à partir des activités
 - Prompts prêts à coller dans l'assistant IA de ton choix
 
-Contenu intégré : jours 1 à 60. La suite sera ajoutée avant le jour 61.
+Contenu intégré : les 300 jours (43 semaines d'écoutes, de lectures, de grammaire et de vocabulaire, du niveau A2 au C1) et les 10 tests mensuels.
 
 ## Passer d'un appareil à l'autre
 

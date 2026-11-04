@@ -471,7 +471,7 @@ function makeRecorder(box,o){
 
 /* ---- Cartes (répétition espacée) ---- */
 function ensureCards(){
-  state.srs=state.srs||{};var maxW=weekOf(state.freeMode?Math.max(todayDay(),selectedDay):todayDay()),changed=false;
+  state.srs=state.srs||{};var far=todayDay();if(state.freeMode){for(var qk in state.quests){var qd=parseInt(qk,10);if(qd>far)far=qd}}var maxW=weekOf(far),changed=false;
   for(var w=1;w<=maxW;w++){var W=CONTENT.weeks[w];if(!W)continue;W.vocab.forEach(function(v,i){var id="v"+w+"_"+i;if(!state.srs[id]){state.srs[id]={f:v[1],b:v[0],ex:v[2],src:"Semaine "+w,due:"",iv:0,ease:2.5,reps:0,isNew:1};changed=true}})}
   var ids={};state.errors.forEach(function(e){var id="e"+e.id;ids[id]=1;if(!state.srs[id]){state.srs[id]={f:"Corrige : "+e.wrong,b:e.right||"(ajoute la correction dans le carnet)",ex:e.sentence||"",src:"Carnet",due:"",iv:0,ease:2.5,reps:0,isNew:1};changed=true}});
   Object.keys(state.srs).forEach(function(id){if(id[0]==="e"&&!ids[id]){delete state.srs[id];changed=true}});
@@ -592,7 +592,7 @@ function renderWorkshop(){
   stopSpeak();var q=questData(d).filter(function(x){return x.k===k})[0];if(!q){closeWorkshop();return}
   panel.classList.remove("hidden");$("wsTitle").textContent=q.t;$("wsMeta").textContent="Jour "+d+" · "+q.m+" min";
   var W=weekContent(d),test=isTest(d),T=CONTENT.tests[d],st=STAGES[stageIdx(d)],target=parseInt(st.words,10)||100;
-  var fallback='<div class="notice info">Le contenu intégré couvre pour l\'instant les jours 1 à 60. Pour ce jour, utilise ces ressources, puis valide le bloc.</div>'+linksHTML(LEVEL_LINKS);
+  var fallback='<div class="notice info">Pas de contenu intégré pour ce bloc. Utilise ces ressources, puis valide le bloc.</div>'+linksHTML(LEVEL_LINKS);
   if(test){
     if(k==="L")return T?actListening(body,d,k,T.listening,"test"):(body.innerHTML=fallback);
     if(k==="Rd")return T?actReading(body,d,k,T.reading,"test"):(body.innerHTML=fallback);
@@ -835,7 +835,7 @@ $("resList").innerHTML=RES.map(function(r){return r.g?'<div class="res-group">'+
 selectedDay=todayDay();
 render();
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-var APP_VERSION="7";
+var APP_VERSION="8";
 var swReg=null;
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
   var hadController=!!navigator.serviceWorker.controller,reloading=false;
@@ -860,10 +860,10 @@ function runDiagnostic(){
   add(navigator.onLine?"ok":"warn","Connexion Internet",navigator.onLine?"En ligne":"Hors ligne","Hors ligne, l'app fonctionne mais ne reçoit pas les mises à jour.");
   try{localStorage.setItem("es_diag","1");var okLS=localStorage.getItem("es_diag")==="1";localStorage.removeItem("es_diag");add(okLS?"ok":"bad","Sauvegarde de ta progression",okLS?"Fonctionne":"Impossible d'écrire","Désactive la navigation privée.")}catch(e){add("bad","Sauvegarde de ta progression","Bloquée","Désactive la navigation privée ou autorise le stockage pour ce site.")}
   var C=window.ES_CONTENT||{weeks:{},tests:{}},nw=Object.keys(C.weeks).length,nt=Object.keys(C.tests).length;
-  add(nw>=9&&nt>=2?"ok":"bad","Contenu intégré",nw+" semaines, "+nt+" tests mensuels",nw?"":"Recharge l'app avec une connexion.");
+  add(nw>=43&&nt>=10?"ok":"bad","Contenu intégré",nw+" semaines, "+nt+" tests mensuels",nw?"":"Recharge l'app avec une connexion.");
   ensureCards();add("ok","Cartes de révision",Object.keys(state.srs).length+" cartes, "+dueCards().length+" à réviser aujourd'hui");
   if("serviceWorker" in navigator){tasks.push(navigator.serviceWorker.getRegistration().then(function(r){var ctl=!!navigator.serviceWorker.controller;add(r&&ctl?"ok":"warn","Mises à jour automatiques",r?(ctl?"Actives":"Actives après la prochaine ouverture"):"Non installées","Ferme puis rouvre l'app.")}))}else add("bad","Mises à jour automatiques","Non prises en charge par ce navigateur");
-  if(window.caches){tasks.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.open(k).then(function(c){return c.keys()})}))}).then(function(lists){var urls=[].concat.apply([],lists).map(function(r){return r.url});var need=["app.js","content-w01-05.js","content-w06-09.js","index.html"];var miss=need.filter(function(n){return !urls.some(function(u){return u.indexOf(n)>=0})});add(miss.length?"warn":"ok","Fonctionnement hors ligne",miss.length?"Fichiers pas encore en mémoire : "+miss.join(", "):"Prêt","Ouvre l'app une fois avec une connexion, puis rouvre-la.")}).catch(function(){add("warn","Fonctionnement hors ligne","Vérification impossible")}))}
+  if(window.caches){tasks.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.open(k).then(function(c){return c.keys()})}))}).then(function(lists){var urls=[].concat.apply([],lists).map(function(r){return r.url});var need=["app.js","content-w01-05.js", "content-w06-09.js", "content-w10-15.js", "content-w16-21.js", "content-w22-27.js", "content-w28-33.js", "content-w34-38.js", "content-w39-43.js", "content-tests.js","index.html"];var miss=need.filter(function(n){return !urls.some(function(u){return u.indexOf(n)>=0})});add(miss.length?"warn":"ok","Fonctionnement hors ligne",miss.length?"Fichiers pas encore en mémoire : "+miss.join(", "):"Prêt","Ouvre l'app une fois avec une connexion, puis rouvre-la.")}).catch(function(){add("warn","Fonctionnement hors ligne","Vérification impossible")}))}
   tasks.push(db().then(function(){add("ok","Stockage des enregistrements audio","Fonctionne")}).catch(function(){add("bad","Stockage des enregistrements audio","Indisponible","Désactive la navigation privée.")}));
   if(navigator.storage&&navigator.storage.persisted)tasks.push(navigator.storage.persisted().then(function(p){add(p?"ok":"warn","Protection contre l'effacement",p?"Données protégées":"Le navigateur peut effacer les données s'il manque de place","Installe l'app et exporte régulièrement tes données.")}));
   if(!TTS.ok)add("bad","Voix de lecture","Non disponible sur ce navigateur","Utilise Safari, Chrome ou Edge à jour.");
