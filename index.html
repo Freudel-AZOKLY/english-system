@@ -311,6 +311,65 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
   .day-number{font-size:22px}.banner-title strong{font-size:15px}.topic-line{font-size:14px}
   .day-banner{padding:14px}
 }
+
+/* ===== Habillage SYSTÈME ===== */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:repeating-linear-gradient(0deg,rgba(56,189,248,.035) 0 1px,transparent 1px 44px),repeating-linear-gradient(90deg,rgba(56,189,248,.035) 0 1px,transparent 1px 44px);mask-image:radial-gradient(ellipse at 50% 20%,#000 0%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at 50% 20%,#000 0%,transparent 75%)}
+.wrap{position:relative;z-index:1}
+.panel{position:relative;border-color:#1f4466;box-shadow:0 0 0 1px rgba(56,189,248,.06) inset,0 10px 30px rgba(0,0,0,.35),0 0 24px rgba(56,189,248,.05)}
+.panel::before{content:"";position:absolute;top:-1px;left:-1px;width:18px;height:18px;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);border-top-left-radius:var(--radius);pointer-events:none;opacity:.8}
+.panel h2{color:#dff5ff;text-shadow:0 0 12px rgba(125,211,252,.35)}
+.sys-title{display:flex;align-items:center;gap:10px;justify-content:center;font:700 12px var(--f-display);letter-spacing:.28em;color:var(--cyan);text-shadow:0 0 10px rgba(125,211,252,.6);margin-bottom:10px}
+.sys-title::before,.sys-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(125,211,252,.6))}
+.sys-title::after{background:linear-gradient(90deg,rgba(125,211,252,.6),transparent)}
+.status-win{border-color:#2f6d99;background:linear-gradient(160deg,rgba(16,45,72,.92),rgba(9,16,27,.95));box-shadow:0 0 40px rgba(56,189,248,.12),0 0 0 1px rgba(125,211,252,.15) inset}
+.status-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;margin-bottom:10px}
+.status-id{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:baseline}
+.stat-k{font:600 10px var(--f-display);letter-spacing:.18em;color:var(--muted)}
+.stat-v{font:600 15px var(--f-display);color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.title-v{color:var(--amber)}
+.status-lv{text-align:right}
+.lv-big{font:700 46px/1 var(--f-display);color:var(--cyan);text-shadow:0 0 18px rgba(125,211,252,.55)}
+.lv-l{font-size:16px;margin-right:4px;letter-spacing:.1em}
+.rank-v{color:var(--cyan);font-size:17px}
+.bar-row{display:grid;grid-template-columns:78px minmax(0,1fr) 92px;gap:10px;align-items:center;margin:6px 0}
+.bar-row .progress{margin:0;height:7px}
+.bar-row .num{text-align:right}
+.progress.energy span{background:linear-gradient(90deg,#16a34a,var(--green))}
+.progress.streak span{background:linear-gradient(90deg,#b7791f,var(--amber))}
+.attr-wrap{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px;align-items:center;margin-top:10px}
+.radar{width:100%;max-width:300px;height:auto}
+.attr-list{display:grid;gap:6px}
+.attr{display:grid;grid-template-columns:96px minmax(0,1fr) auto;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:4px 0}
+.attr b{font:700 18px var(--f-display);color:var(--cyan)}
+.hud-lv{position:relative}
+.hud-bar{display:block;height:3px;background:var(--grid);border-radius:3px;overflow:hidden;margin-top:3px}.hud-bar span{display:block;height:100%;width:0;background:var(--cyan)}
+.badge{text-align:left;background:transparent;color:var(--text);font:inherit;cursor:pointer}
+.badge.eq{box-shadow:0 0 0 1px var(--amber) inset,0 0 16px rgba(251,191,36,.25)}
+.toast.sys{display:grid;gap:2px;text-align:left;background:linear-gradient(160deg,#0f2a44,#0a1626);border:1px solid var(--cyan);box-shadow:0 0 24px rgba(56,189,248,.35);font-size:13px;min-width:min(320px,calc(100% - 32px))}
+.toast.sys.gold{border-color:var(--amber);box-shadow:0 0 24px rgba(251,191,36,.35)}
+.sys-head{font:700 11px var(--f-display);letter-spacing:.2em;color:var(--cyan)}
+.toast.sys.gold .sys-head{color:var(--amber)}
+.cine{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:radial-gradient(circle at 50% 45%,rgba(16,45,72,.85),rgba(4,7,12,.95));padding:24px}
+.cine.on{display:grid}
+.cine-box{position:relative;z-index:1;text-align:center;display:grid;gap:12px;justify-items:center;max-width:420px}
+.cine-big{font:700 clamp(34px,9vw,60px)/1 var(--f-display);letter-spacing:.08em;color:#e0f6ff;text-shadow:0 0 24px rgba(125,211,252,.9),0 0 60px rgba(56,189,248,.5)}
+.cine.rank .cine-big{color:#fff3c4;text-shadow:0 0 24px rgba(251,191,36,.9),0 0 70px rgba(251,191,36,.5)}
+.cine-small{color:var(--muted);font-size:14px}
+.cine-ring{position:absolute;width:260px;height:260px;border-radius:50%;border:2px solid rgba(125,211,252,.7);box-shadow:0 0 40px rgba(56,189,248,.6),inset 0 0 40px rgba(56,189,248,.4);animation:ring 1.4s ease-out both}
+.cine.rank .cine-ring{border-color:rgba(251,191,36,.8);box-shadow:0 0 50px rgba(251,191,36,.6),inset 0 0 40px rgba(251,191,36,.35)}
+.cine.on .cine-box{animation:pop .5s ease-out both}
+@keyframes ring{0%{transform:scale(.2);opacity:0}40%{opacity:1}100%{transform:scale(2.6);opacity:0}}
+@keyframes pop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+.dq{position:fixed;inset:0;z-index:55;display:none;place-items:center;background:rgba(4,7,12,.78);backdrop-filter:blur(3px);padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px))}
+.dq.on{display:grid}
+.dq-box{width:min(460px,100%);background:linear-gradient(160deg,#0f2a44,#0a1626);border:1px solid var(--cyan);border-radius:14px;padding:18px;box-shadow:0 0 40px rgba(56,189,248,.35);animation:pop .35s ease-out both}
+.dq-box h2{font:600 17px var(--f-display);margin:0 0 10px;text-align:center}
+.dq-list{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:6px}
+.dq-list li{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed #1f4466;padding:5px 0;font-size:14px}
+.dq-list li.ok{color:var(--green)}
+.dq-warn{color:var(--red)}
+@media(max-width:600px){.attr-wrap{grid-template-columns:1fr;justify-items:center}.attr-list{width:100%}.lv-big{font-size:38px}.bar-row{grid-template-columns:64px minmax(0,1fr) 80px}}
+@media(prefers-reduced-motion:reduce){.cine-ring,.cine.on .cine-box,.dq-box{animation:none!important}}
 .toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#0d2941;border:1px solid var(--blue);color:var(--text);padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:calc(100% - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .prompt-box{font:12px/1.5 var(--f-mono);min-height:120px}
@@ -333,7 +392,7 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 <div class="tabpane" id="tab-today" role="tabpanel">
 <section class="panel hidden" id="placement" style="margin-bottom:16px;border-color:var(--violet-line)"></section>
 <div class="hud" id="hud">
-  <button class="hud-item" data-goto="progress" aria-label="Voir ma progression"><span class="hud-l">Rang</span><b id="hudRank">E-RANK</b></button>
+  <button class="hud-item hud-lv" data-goto="progress" aria-label="Voir ma fenêtre de statut"><span class="hud-l" id="hudRank">E-RANK</span><b id="hudLv">LV.1</b><span class="hud-bar"><span id="hudLvBar"></span></span></button>
   <div class="hud-item"><span class="hud-l">Jour</span><b class="num"><span id="hudDay">1</span><span class="muted">/300</span></b></div>
   <div class="hud-item"><span class="hud-l">Série</span><b class="num"><span id="hudStreak">0</span> j</b></div>
   <div class="hud-item"><span class="hud-l">Heures</span><b class="num" id="hudHours">0</b></div>
@@ -341,7 +400,7 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 <div class="day-banner" id="dayBanner">
   <div style="min-width:0">
     <div class="eyebrow" id="bannerEyebrow">Séance du jour</div>
-    <div class="banner-title"><span class="day-number" id="bannerDay">DAY 001</span><strong id="phaseTitle">—</strong><span class="pill boss hidden" id="bossPill">◆ Épreuve hebdo</span><span class="pill test hidden" id="testPill">● Test mensuel</span></div>
+    <div class="banner-title"><span class="day-number" id="bannerDay">DAY 001</span><strong id="phaseTitle">—</strong><span class="pill boss hidden" id="bossPill">◆ Donjon</span><span class="pill test hidden" id="testPill">● Réévaluation</span></div>
     <div class="banner-meta">
       <div class="topic-line" id="topicWrap">Sujet : <em>—</em></div>
       <div>Grammaire de la semaine : <b id="grammarLine">—</b></div>
@@ -351,7 +410,7 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
   <div class="action-row"><button class="btn primary" id="startSession">▶ Commencer la séance</button><button class="btn" id="prevDay" aria-label="Jour précédent">←</button><button class="btn" id="todayBtn">Aujourd'hui</button><button class="btn" id="nextDay" aria-label="Jour suivant">→</button></div>
 </div>
   <section class="panel" id="questPanel">
-    <div class="panel-head"><h2>▣ Séance du jour</h2><span class="pill num" id="questCount">0 / 7</span></div>
+    <div class="panel-head"><h2>▣ Quête du jour</h2><div class="action-row"><button class="btn small ghost" id="dqBtn">[ ! ] Voir la quête</button><span class="pill num" id="questCount">0 / 7</span></div></div>
     <div class="notice hidden" id="lockNotice"></div>
     <div class="notice info hidden" id="focusNotice"></div>
     <div id="quests"></div>
@@ -377,7 +436,7 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
     <div class="game-box hidden" id="gameBox"></div>
   </section>
 </div>
-<div class="tabpane hidden" id="tab-progress" role="tabpanel"><div class="topgrid-wrap">
+<div class="tabpane hidden" id="tab-progress" role="tabpanel"><section class="panel status-win" id="statusWin" aria-label="Fenêtre de statut"></section><div class="topgrid-wrap">
 <div class="grid topgrid">
   <section class="panel rank-card" aria-label="Rang">
     <div class="stat-label">Rang actuel</div>
@@ -464,7 +523,7 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
     <div class="legend"><span><i style="background:#103222;border-color:#24744b"></i>Complet</span><span><i style="background:#0f2433;border-color:#2b5675"></i>Partiel</span><span><i style="border-color:#4a2733"></i>Manqué</span><span><i style="border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)"></i>Sélectionné</span><span><i style="outline:1px dashed var(--amber);border:0"></i>Aujourd'hui</span><span style="text-decoration:line-through">Dispensé</span><span style="color:var(--amber)">◆ Épreuve hebdo</span><span style="color:var(--violet)">● Test mensuel</span></div>
   </section>
   <section class="panel" id="badges">
-    <div class="panel-head"><h2>♛ Succès</h2><span class="pill num" id="badgeCount">0</span></div>
+    <div class="panel-head"><h2>♛ Titres</h2><span class="pill num" id="badgeCount">0</span></div>
     <div class="badge-grid" id="badgeGrid"></div>
   </section>
 </div></div>
@@ -515,6 +574,8 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 <div class="tabpane hidden" id="tab-settings" role="tabpanel"><div class="pane-grid">
   <section class="panel" id="settings">
     <div class="panel-head"><h2>⚙ Réglages</h2></div>
+    <div class="two"><div class="field"><label for="playerName">Nom de joueuse</label><input type="text" id="playerName" maxlength="30" placeholder="Ton prénom"></div><div class="field"><label for="playerClass">Classe</label><select id="playerClass"><option>Chercheuse</option><option>Analyste</option><option>Stratège</option><option>Exploratrice</option><option>Oratrice</option></select></div></div>
+    <label class="tiny" style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="sfxToggle" checked> Sons et vibrations du Système</label>
     <div class="field"><label for="startDate">Date de début (jour 1)</label><input type="date" id="startDate"></div>
     <div class="field"><label for="track">Parcours des sujets</label><select id="track"><option value="acad">Académique & recherche (économétrie, data)</option><option value="pro">Professionnel (entreprise, entretiens)</option></select></div>
     <label class="tiny" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="freeMode"> Mode libre : débloquer les jours à venir</label>
@@ -587,6 +648,8 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
   <div class="ws-foot"><button class="btn" id="wsPrev">← Précédent</button><button class="btn primary" id="wsNext">Suivant →</button></div>
 </div>
 
+<div class="cine" id="cine" aria-live="assertive"></div>
+<div class="dq" id="dq"></div>
 <div class="toast" id="toast" role="status"></div>
 <div class="timerbar hidden" id="timerBar" role="region" aria-label="Minuteur">
   <div class="timer-inner">
@@ -596,16 +659,16 @@ body.ws-open .timerbar{bottom:calc(64px + env(safe-area-inset-bottom,0px))}
   </div>
 </div>
 
-<script src="content-w01-05.js?v=10"></script>
-<script src="content-w06-09.js?v=10"></script>
-<script src="content-w10-15.js?v=10"></script>
-<script src="content-w16-21.js?v=10"></script>
-<script src="content-w22-27.js?v=10"></script>
-<script src="content-w28-33.js?v=10"></script>
-<script src="content-w34-38.js?v=10"></script>
-<script src="content-w39-43.js?v=10"></script>
-<script src="content-tests.js?v=10"></script>
-<script src="placement-data.js?v=10"></script>
-<script src="app.js?v=10"></script>
+<script src="content-w01-05.js?v=11"></script>
+<script src="content-w06-09.js?v=11"></script>
+<script src="content-w10-15.js?v=11"></script>
+<script src="content-w16-21.js?v=11"></script>
+<script src="content-w22-27.js?v=11"></script>
+<script src="content-w28-33.js?v=11"></script>
+<script src="content-w34-38.js?v=11"></script>
+<script src="content-w39-43.js?v=11"></script>
+<script src="content-tests.js?v=11"></script>
+<script src="placement-data.js?v=11"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>

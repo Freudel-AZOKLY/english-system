@@ -118,7 +118,7 @@ function normalize(o){
   if(Array.isArray(o.errors))s.errors=o.errors.filter(function(e){return e&&e.wrong!=null}).slice(0,2000).map(function(e){return {id:String(e.id||uid()),wrong:String(e.wrong).slice(0,400),right:String(e.right||"").slice(0,400),sentence:String(e.sentence||"").slice(0,400),cat:e.cat||"grammaire",day:e.day||null,reviews:Number(e.reviews)||0}});
   if(parseISO(o.startDate))s.startDate=o.startDate;else if(o.createdAt){var d=new Date(o.createdAt);if(!isNaN(d))s.startDate=isoDate(d)}
   if(o.track==="pro"||o.track==="acad")s.track=o.track;
-  s.freeMode=!!o.freeMode;s.startOffset=Math.max(0,Math.min(270,parseInt(o.startOffset,10)||0));s.placementSeen=!!o.placementSeen;
+  s.freeMode=!!o.freeMode;s.playerName=String(o.playerName||"").slice(0,30);s.playerClass=String(o.playerClass||"");s.title=String(o.title||"");if(o.seenLv)s.seenLv=+o.seenLv;if(o.seenRank!=null)s.seenRank=+o.seenRank;s.startOffset=Math.max(0,Math.min(270,parseInt(o.startOffset,10)||0));s.placementSeen=!!o.placementSeen;
   if(typeof o.updatedAt==="string")s.updatedAt=o.updatedAt;if(typeof o.lastExport==="string")s.lastExport=o.lastExport;
   Object.keys(s.assessments).forEach(function(k){var a=s.assessments[k];if(!a||!Array.isArray(a.scores)||a.scores.length!==5)delete s.assessments[k];else a.scores=a.scores.map(function(x){return clamp(x,1,5)})});
   return s;
@@ -159,7 +159,7 @@ function baseQuests(d){
   if(isWeekly(d)){
     return [
      {k:"R",t:"Révision légère",d:"Toutes tes cartes dues : vocabulaire et erreurs du carnet. Pour chaque erreur, dis une nouvelle phrase correcte à voix haute.",m:15,tag:"Révision"},
-     {k:"S",t:"Épreuve hebdomadaire",d:st.boss[tr],m:25,tag:"Oral",cls:"bossq",boss:1},
+     {k:"S",t:"Donjon hebdomadaire",d:st.boss[tr],m:25,tag:"Oral",cls:"bossq",boss:1},
      {k:"B",t:"Bilan de la semaine",d:"Compare avec l'épreuve de la semaine dernière, réponds aux 4 questions et remplis l'évaluation ci-dessous.",m:10,tag:"Discipline",cls:"bossq"},
      {k:"Rd",t:"Anglais plaisir",d:"Lis ou écoute ce que tu veux en anglais, sans exercice.",m:10,tag:"Plaisir"}];
   }
@@ -226,7 +226,7 @@ function render(){
   $("hudRank").textContent=rank.name;$("hudDay").textContent=tdy;$("hudStreak").textContent=st.cur;$("hudHours").textContent=h.toLocaleString("fr-FR",{maximumFractionDigits:0})+" h";
 
   var b=$("dayBanner");b.classList.toggle("boss",weekly);b.classList.toggle("test",test);
-  $("bannerEyebrow").textContent=test?(d===DAYS?"Évaluation finale":"Test mensuel · fin du mois "+(mi+1)):weekly?"Jour léger · semaine "+weekOf(d):"Séance · mois "+(mi+1)+" · semaine "+weekOf(d);
+  $("bannerEyebrow").textContent=test?(d===DAYS?"Réévaluation finale":"Réévaluation de rang · fin du mois "+(mi+1)):weekly?"Donjon · semaine "+weekOf(d):"Séance · mois "+(mi+1)+" · semaine "+weekOf(d);
   $("bannerDay").textContent="DAY "+pad(d,3);$("phaseTitle").textContent=M.title;
   $("bossPill").classList.toggle("hidden",!weekly);$("testPill").classList.toggle("hidden",!test);
   if(test)$("topicWrap").innerHTML="Aujourd'hui : <em>les 4 compétences, mesurées dans les mêmes conditions</em>";
@@ -258,14 +258,14 @@ function render(){
   var cd=0;$("candoList").innerHTML=M.cando.map(function(c,j){var k=mi+"_"+j,on=!!state.cando[k];if(on)cd++;return '<label><input type="checkbox" data-cando="'+k+'" '+(on?"checked":"")+'><span>'+esc(c)+'</span></label>'}).join("");
   $("candoCount").textContent="("+cd+"/3 validés)";
 
-  $("startDate").value=state.startDate;$("track").value=state.track;$("freeMode").checked=state.freeMode;
+  $("startDate").value=state.startDate;if(document.activeElement!==$("playerName"))$("playerName").value=state.playerName||"";$("playerClass").value=state.playerClass||CLASSES[0];$("sfxToggle").checked=prefs.sfx!==false;$("track").value=state.track;$("freeMode").checked=state.freeMode;
   $("journalDay").textContent="J"+d;$("journal").value=state.journals[String(d)]||"";$("customGoal").value=state.goals[String(d)]||"";$("journalStatus").textContent="";
 
   var html="";for(var x=1;x<=DAYS;x++){var c=[],n=doneCount(x),tot=questData(x).length;if(x===d)c.push("current");if(n===tot)c.push("done");else if(n>0)c.push("partial");else if(x<=(state.startOffset||0))c.push("skipped");else if(x<tdy&&off>=1)c.push("missed");if(isLocked(x))c.push("locked");if(x===tdy&&off>=1&&off<=DAYS)c.push("today");if(isTest(x))c.push("testd");else if(isWeekly(x))c.push("bossd");html+='<button class="day-cell '+c.join(" ")+'" data-day="'+x+'" aria-label="Jour '+x+(isTest(x)?", test mensuel":isWeekly(x)?", épreuve":"")+', '+n+' sur '+tot+'">'+x+'</button>'}
   $("dayMap").innerHTML=html;
   renderErrors();renderScenarios();setStatus();ensureCards();
   if(ws.day&&ws.day!==d)closeWorkshop();
-  renderArena();checkBadges();updateNext();clearTimeout(render.st);render.st=setTimeout(renderStats,400);
+  renderArena();checkBadges();updateNext();renderStatus();checkProgressEvents();clearTimeout(render.st);render.st=setTimeout(renderStats,400);
   $("offsetSel").value=String((state.startOffset||0)+1);if(!$("offsetSel").value)$("offsetSel").value="1";
   if(d<=(state.startOffset||0))$("dateLine").textContent="Jour dispensé grâce au test de positionnement · ouvert pour révision";
   var nx=nextUndone(d);$("startSession").textContent=locked?"Jour verrouillé":nx?(done?"▶ Continuer la séance":"▶ Commencer la séance"):"✓ Séance terminée";$("startSession").disabled=locked||!nx;
@@ -389,8 +389,9 @@ function addDaysISO(n){var t=new Date();t.setDate(t.getDate()+n);return isoDate(
 var prefs={voice:"",rate:1,sr:true,lang:"en-GB"};
 try{Object.assign(prefs,JSON.parse(localStorage.getItem("englishSystem_prefs")||"{}"))}catch(e){}
 function savePrefs(){try{localStorage.setItem("englishSystem_prefs",JSON.stringify(prefs))}catch(e){}}
-function toast(msg){var t=$("toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast.tm);toast.tm=setTimeout(function(){t.classList.remove("on")},2600)}
-function autoDone(d,k,msg){if(isLocked(d)||isDone(d,k))return;state.quests[qKey(d,k)]=1;persist();render();var n=nextUndone(d);toast((msg||"Bloc validé automatiquement ✓")+(n?"":" · Séance terminée, bravo !"))}
+function toast(msg){var t=$("toast");t.textContent=msg;t.className="toast on";clearTimeout(toast.tm);toast.tm=setTimeout(function(){t.classList.remove("on")},2600)}
+function autoDone(d,k,msg){if(isLocked(d)||isDone(d,k))return;var q=questData(d).filter(function(x){return x.k===k})[0];state.quests[qKey(d,k)]=1;persist();render();var n=nextUndone(d);
+  if(!n){sysMsg("[ QUÊTE QUOTIDIENNE TERMINÉE ]","Toutes les quêtes du jour sont accomplies. Récompense obtenue.","gold");sfx("lvl")}else{sysMsg("[ QUÊTE ACCOMPLIE ]",(msg?msg+" · ":"")+(q?"+"+q.xp+" XP":""));sfx("quest")}}
 function norm(s){return String(s==null?"":s).toLowerCase().replace(/[’‘`]/g,"'").replace(/[.,!?;:"]/g,"").replace(/\s+/g," ").trim()}
 
 /* ---- Synthèse vocale ---- */
@@ -774,9 +775,9 @@ function checkBadges(){if(badgeBusy)return;badgeBusy=true;recCount().then(functi
   var perfect=false;for(var d in (state.gram||{}))if(state.gram[d]>=8)perfect=true;
   var c={blocks:Object.keys(state.quests).length,comp:T.comp,streak:st.best,recs:n,reps:reps,errors:state.errors.length,perfect:perfect,test30:!!(state.tests["30"]&&state.tests["30"].listen!=null),best:g.best,plays:g.plays,hours:T.min/60,rank:rankInfo(T.xp).i};
   var fresh=[];BADGES.forEach(function(b){if(!state.badges[b.id]&&b.t(c)){state.badges[b.id]=todayISO();fresh.push(b)}});
-  if(fresh.length){try{localStorage.setItem(LS_KEY,JSON.stringify(state))}catch(e){}toast("Succès débloqué : "+fresh.map(function(b){return b.ic+" "+b.n}).join(", "))}
+  if(fresh.length){try{localStorage.setItem(LS_KEY,JSON.stringify(state))}catch(e){}setTimeout(function(){sysMsg("[ NOUVEAU TITRE ]",fresh.map(function(b){return b.ic+" "+b.n}).join(", ")+" · équipe-le dans Progrès → Titres","gold");sfx("lvl")},900)}
   var got=Object.keys(state.badges).length;$("badgeCount").textContent=got+" / "+BADGES.length;
-  $("badgeGrid").innerHTML=BADGES.map(function(b){var on=state.badges[b.id];return '<div class="badge'+(on?" on":"")+'" title="'+esc(b.d)+'"><span class="badge-ic" aria-hidden="true">'+b.ic+'</span><span class="badge-n">'+esc(b.n)+'</span><span class="tiny muted">'+esc(b.d)+'</span></div>'}).join("");
+  $("badgeGrid").innerHTML=BADGES.map(function(b){var on=state.badges[b.id],eq=state.title===b.id;return '<button class="badge'+(on?" on":"")+(eq?" eq":"")+'" data-badge="'+b.id+'" title="'+esc(b.d)+'"><span class="badge-ic" aria-hidden="true">'+b.ic+'</span><span class="badge-n">'+esc(b.n)+'</span><span class="tiny muted">'+esc(b.d)+'</span>'+(eq?'<span class="tag boss">Équipé</span>':on?'<span class="tiny" style="color:var(--amber)">Toucher pour équiper</span>':'')+'</button>'}).join("");
 }).catch(function(){badgeBusy=false})}
 $("arenaGrid").addEventListener("click",function(e){var b=e.target.closest("[data-game]");if(b)openGame(b.dataset.game)});
 
@@ -926,6 +927,77 @@ document.addEventListener("visibilitychange",function(){if(!document.hidden&&GH.
 
 
 
+/* =========== LE SYSTÈME : niveau, attributs, titres, événements =========== */
+var LV_K=CORE_MAX/(99*99);
+function levelInfo(xp){var lv=Math.min(100,Math.floor(Math.sqrt(xp/LV_K))+1),base=Math.round(LV_K*(lv-1)*(lv-1)),next=lv>=100?null:Math.round(LV_K*lv*lv);return {lv:lv,base:base,next:next,pct:next?Math.min(100,(xp-base)/(next-base)*100):100}}
+var ATTRS=[["L","PERCEPTION","Écoute"],["S","VOIX","Oral"],["Rd","INTELLECT","Lecture"],["W","PLUME","Écriture"],["G","PRÉCISION","Grammaire"]];
+var ATTR_OF={L:"L",S:"S",P:"S",Rd:"Rd",W:"W",G:"G",R:"G",B:"G"};
+function attributes(){var pts={L:10,S:10,Rd:10,W:10,G:10};
+  for(var key in state.quests){var m=/^(\d+)_(\w+)$/.exec(key);if(!m)continue;var d=+m[1],k=m[2],a=ATTR_OF[k];if(!a)continue;var q=questData(d).filter(function(x){return x.k===k})[0];pts[a]+=q?q.m/10:2}
+  for(var t in state.tests){var T=state.tests[t];if(T.listen!=null)pts.L+=T.listen/20;if(T.read!=null)pts.Rd+=T.read/20;if(T.speak)pts.S+=Math.min(10,T.speak/60);if(T.words)pts.W+=Math.min(10,T.words/50)}
+  var g=G();if(g.best){pts.S+=Math.min(15,(g.best.jam||0)/6);pts.L+=Math.min(10,(g.best.pairs||0));pts.G+=Math.min(10,(g.best.order||0)/10)}
+  Object.keys(pts).forEach(function(k){pts[k]=Math.round(pts[k])});return pts}
+var CLASSES=["Chercheuse","Analyste","Stratège","Exploratrice","Oratrice"];
+function radarSVG(pts){var keys=ATTRS.map(function(a){return a[0]}),max=Math.max(40,Math.max.apply(null,keys.map(function(k){return pts[k]}))*1.15),cx=150,cy=126,R=82;
+  function pt(i,r){var ang=-Math.PI/2+i*2*Math.PI/keys.length;return [cx+r*Math.cos(ang),cy+r*Math.sin(ang)]}
+  var s='<svg viewBox="0 0 300 250" class="radar" role="img" aria-label="Attributs du joueur">';
+  [.25,.5,.75,1].forEach(function(f){s+='<polygon points="'+keys.map(function(k,i){return pt(i,R*f).join(",")}).join(" ")+'" fill="none" stroke="#1f3a55" stroke-width="1"/>'});
+  keys.forEach(function(k,i){var e=pt(i,R);s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+e[0]+'" y2="'+e[1]+'" stroke="#1f3a55"/>';var l=pt(i,R+20);s+='<text x="'+l[0]+'" y="'+(l[1]+4)+'" text-anchor="middle" font-size="9.5" fill="#8ea3bb" font-family="Chakra Petch,sans-serif" letter-spacing="1">'+ATTRS[i][1]+'</text>'});
+  s+='<polygon points="'+keys.map(function(k,i){return pt(i,R*Math.min(1,pts[k]/max)).join(",")}).join(" ")+'" fill="rgba(56,189,248,.22)" stroke="#7dd3fc" stroke-width="2" class="radar-shape"/>';
+  keys.forEach(function(k,i){var p=pt(i,R*Math.min(1,pts[k]/max));s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="#7dd3fc"/>'});
+  return s+'</svg>'}
+function weekEnergy(){var w=weekOf(todayDay()),m=0;for(var d=(w-1)*7+1;d<=Math.min(DAYS,w*7);d++)m+=dayMinutes(d);return Math.min(100,Math.round(m/780*100))}
+function renderStatus(){
+  var box=$("statusWin");if(!box)return;var T=totals(),li=levelInfo(T.xp),rk=rankInfo(T.xp),pts=attributes(),st=streaks();
+  var title=state.title&&BADGES.filter(function(b){return b.id===state.title&&state.badges&&state.badges[b.id]})[0];
+  var name=(state.playerName||"").trim()||"Joueuse",cls=state.playerClass||CLASSES[0];
+  box.innerHTML='<div class="sys-title">[ FENÊTRE DE STATUT ]</div>'+
+   '<div class="status-grid"><div class="status-id"><div class="stat-k">NOM</div><div class="stat-v">'+esc(name)+'</div><div class="stat-k">CLASSE</div><div class="stat-v">'+esc(cls)+'</div><div class="stat-k">TITRE</div><div class="stat-v title-v">'+(title?esc(title.n):'<span class="muted">aucun</span>')+'</div></div>'+
+   '<div class="status-lv"><div class="lv-big"><span class="lv-l">LV.</span><span class="num">'+li.lv+'</span></div><div class="stat-k">RANG</div><div class="stat-v rank-v">'+rk.name+'</div></div></div>'+
+   '<div class="bar-row"><span class="stat-k">EXP</span><div class="progress"><span style="width:'+li.pct+'%"></span></div><span class="num tiny">'+(li.next?(T.xp-li.base)+" / "+(li.next-li.base):"MAX")+'</span></div>'+
+   '<div class="bar-row"><span class="stat-k">ÉNERGIE</span><div class="progress energy"><span style="width:'+weekEnergy()+'%"></span></div><span class="num tiny">'+weekEnergy()+' %</span></div>'+
+   '<div class="bar-row"><span class="stat-k">SÉRIE</span><div class="progress streak"><span style="width:'+Math.min(100,st.cur/30*100)+'%"></span></div><span class="num tiny">'+st.cur+' j</span></div>'+
+   '<div class="attr-wrap">'+radarSVG(pts)+'<div class="attr-list">'+ATTRS.map(function(a){return '<div class="attr"><span class="stat-k">'+a[1]+'</span><span class="tiny muted">'+a[2]+'</span><b class="num">'+pts[a[0]]+'</b></div>'}).join("")+'</div></div>'+
+   '<p class="tiny muted" style="margin:8px 0 0">L\'énergie correspond aux heures de séance de la semaine (objectif 13 h). Les attributs montent avec chaque bloc terminé, chaque test et tes records dans les défis.</p>';
+  $("hudLv").textContent="LV."+li.lv;$("hudLvBar").style.width=li.pct+"%";
+}
+
+/* Messages du Système */
+function sysMsg(head,body,cls){var t=$("toast");t.innerHTML='<span class="sys-head">'+esc(head)+'</span>'+esc(body);t.className="toast on sys "+(cls||"");clearTimeout(toast.tm);toast.tm=setTimeout(function(){t.classList.remove("on")},3200)}
+var SFX={ac:null};
+function sfx(kind){if(prefs.sfx===false)return;try{SFX.ac=SFX.ac||new (window.AudioContext||window.webkitAudioContext)();var ac=SFX.ac,t0=ac.currentTime;
+  var notes=kind==="lvl"?[523,659,784,1047]:kind==="rank"?[392,523,659,784,1047,1319]:kind==="quest"?[659,988]:[880];
+  notes.forEach(function(f,i){var o=ac.createOscillator(),g=ac.createGain();o.type=kind==="rank"?"sawtooth":"triangle";o.frequency.value=f;var s=t0+i*(kind==="quest"?.09:.11);g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(kind==="rank"?.08:.14,s+.02);g.gain.exponentialRampToValueAtTime(.0001,s+.35);o.connect(g).connect(ac.destination);o.start(s);o.stop(s+.4)})}catch(e){}
+  try{if(navigator.vibrate)navigator.vibrate(kind==="rank"?[60,40,60,40,160]:kind==="lvl"?[40,30,90]:30)}catch(e){}}
+function cinematic(kind,big,small){if(prefs.cine===false||matchMedia("(prefers-reduced-motion: reduce)").matches){sysMsg("[ SYSTÈME ]",big+" · "+small,kind==="rank"?"gold":"");sfx(kind==="rank"?"rank":"lvl");return}var o=$("cine");o.className="cine on "+kind;o.innerHTML='<div class="cine-ring"></div><div class="cine-box"><div class="sys-title">[ SYSTÈME ]</div><div class="cine-big">'+esc(big)+'</div><div class="cine-small">'+esc(small)+'</div><button class="btn primary" id="cineOk">Continuer</button></div>';sfx(kind==="rank"?"rank":"lvl");
+  $("cineOk").onclick=function(){o.className="cine"};setTimeout(function(){if(o.classList.contains("on")&&kind!=="rank")o.className="cine"},4200)}
+var lastSeen=null;
+function checkProgressEvents(){var T=totals(),li=levelInfo(T.xp),rk=rankInfo(T.xp);
+  if(lastSeen===null){lastSeen={lv:state.seenLv||li.lv,rank:state.seenRank!=null?state.seenRank:rk.i}}
+  if(rk.i>lastSeen.rank){cinematic("rank","RANG SUPÉRIEUR","Tu es maintenant "+rk.name+". "+RANK_SUB[rk.i])}
+  else if(li.lv>lastSeen.lv){var milestone=Math.floor(li.lv/5)>Math.floor(lastSeen.lv/5);if(milestone)cinematic("lvl","NIVEAU "+li.lv,"Palier franchi · tes attributs ont augmenté.");else setTimeout(function(){sysMsg("[ NIVEAU SUPÉRIEUR ]","LV."+li.lv+" atteint · attributs en hausse")},1200)}
+  if(li.lv!==lastSeen.lv||rk.i!==lastSeen.rank){lastSeen={lv:li.lv,rank:rk.i};state.seenLv=li.lv;state.seenRank=rk.i;try{localStorage.setItem(LS_KEY,JSON.stringify(state))}catch(e){}}}
+
+/* Quête quotidienne au lancement */
+function dailyQuestPopup(force){if($("cine").classList.contains("on")||!$("placement").classList.contains("hidden")){setTimeout(function(){dailyQuestPopup(force)},900);return}var d=todayDay(),key="englishSystem_dq_"+todayISO();if(!force){try{if(localStorage.getItem(key))return}catch(e){}}
+  if(isLocked(d)||isComplete(d)||rawDayOffset()<1||rawDayOffset()>DAYS)return;
+  var qs=questData(d),boss=isWeekly(d),test=isTest(d),done=doneCount(d);
+  var o=$("dq");o.className="dq on";o.innerHTML='<div class="dq-box" role="dialog" aria-modal="true" aria-labelledby="dqT"><div class="sys-title">[ '+(test?"RÉÉVALUATION DE RANG":boss?"DONJON HEBDOMADAIRE":"QUÊTE QUOTIDIENNE")+' ]</div><h2 id="dqT">'+(test?"Mesure tes 4 compétences":boss?"Une porte s'est ouverte":"Programme d'entraînement")+' · jour '+d+'</h2>'+
+   '<ul class="dq-list">'+qs.map(function(q){return '<li class="'+(isDone(d,q.k)?"ok":"")+'"><span>'+esc(q.t)+'</span><span class="num">'+(isDone(d,q.k)?"✓":q.m+" min")+'</span></li>'}).join("")+'</ul>'+
+   '<p class="tiny dq-warn">⚠ Si la quête n\'est pas terminée aujourd\'hui, ta série retombe à zéro.</p><p class="tiny muted">Récompense : +'+qs.reduce(function(s,q){return s+q.xp},0)+' XP'+(done?" · "+done+" / "+qs.length+" déjà validés":"")+'</p>'+
+   '<div class="action-row"><button class="btn primary" id="dqGo">'+(done?"Reprendre la quête":"Accepter la quête")+'</button><button class="btn ghost" id="dqLater">Plus tard</button></div></div>';
+  try{localStorage.setItem(key,"1")}catch(e){}
+  $("dqGo").onclick=function(){o.className="dq";showTab("today");var n=nextUndone(d);selectedDay=d;render();if(n)openActivity(d,n)};
+  $("dqLater").onclick=function(){o.className="dq"};
+  o.onclick=function(e){if(e.target===o)o.className="dq"}}
+
+/* Titres : équiper un succès */
+$("badgeGrid").addEventListener("click",function(e){var b=e.target.closest("[data-badge]");if(!b)return;var id=b.dataset.badge;if(!(state.badges&&state.badges[id])){toast("Titre verrouillé : remplis la condition pour le débloquer.");return}state.title=state.title===id?"":id;persist();renderStatus();checkBadges();sysMsg("[ TITRE ]",state.title?"Titre équipé : "+BADGES.filter(function(x){return x.id===id})[0].n:"Titre retiré.")});
+$("playerName").addEventListener("change",function(){state.playerName=this.value.trim().slice(0,30);persist();renderStatus()});
+$("playerClass").addEventListener("change",function(){state.playerClass=this.value;persist();renderStatus()});
+$("sfxToggle").addEventListener("change",function(){prefs.sfx=this.checked;savePrefs();if(this.checked)sfx("quest")});
+$("dqBtn").addEventListener("click",function(){dailyQuestPopup(true)});
+
 /* =========== Onglets =========== */
 var curTab="today";
 function showTab(name){curTab=name;["today","arena","progress","tools","settings"].forEach(function(t){$("tab-"+t).classList.toggle("hidden",t!==name)});document.querySelectorAll("#tabbar [data-tab]").forEach(function(b){b.setAttribute("aria-selected",String(b.dataset.tab===name))});try{localStorage.setItem("englishSystem_tab",name)}catch(e){}if(name==="progress")renderStats();window.scrollTo(0,0)}
@@ -934,7 +1006,7 @@ $("tabbar").addEventListener("click",function(e){var b=e.target.closest("[data-t
 document.addEventListener("click",function(e){var g=e.target.closest("[data-goto]");if(g)goTo(g.dataset.goto)});
 $("quests").addEventListener("click",function(e){if(e.target.closest("input,button,label"))return;var c=e.target.closest(".quest");if(!c)return;var cb=c.querySelector("[data-k]");if(cb&&!cb.disabled)openActivity(selectedDay,cb.dataset.k)});
 /* =========== Événements =========== */
-$("quests").addEventListener("change",function(e){var k=e.target.dataset.k;if(!k)return;var key=qKey(selectedDay,k);if(e.target.checked)state.quests[key]=1;else delete state.quests[key];persist();render()});
+$("quests").addEventListener("change",function(e){var k=e.target.dataset.k;if(!k)return;var key=qKey(selectedDay,k);if(e.target.checked)state.quests[key]=1;else delete state.quests[key];persist();render();if(e.target.checked){var q=questData(selectedDay).filter(function(x){return x.k===k})[0];if(isComplete(selectedDay)){sysMsg("[ QUÊTE QUOTIDIENNE TERMINÉE ]","Toutes les quêtes du jour sont accomplies.","gold");sfx("lvl")}else{sysMsg("[ QUÊTE ACCOMPLIE ]","+"+(q?q.xp:0)+" XP");sfx("quest")}}});
 $("quests").addEventListener("click",function(e){var b=e.target.closest("[data-timer]");if(b)startTimer(+b.dataset.timer)});
 $("immersionMin").addEventListener("change",function(){var v=clamp(this.value,0,600);if(v)state.bonus[selectedDay]=v;else delete state.bonus[selectedDay];persist();render()});
 $("humanDone").addEventListener("change",function(){if(this.checked)state.human[selectedDay]=1;else delete state.human[selectedDay];persist();render()});
@@ -984,9 +1056,9 @@ $("resList").innerHTML=RES.map(function(r){return r.g?'<div class="res-group">'+
 selectedDay=todayDay();
 render();ghUI();if(GH.token)ghPull();
 try{var lt=localStorage.getItem("englishSystem_tab");if(lt&&$("tab-"+lt))showTab(lt)}catch(e){}
-if(!state.placementSeen&&!hasProgress(state))setTimeout(openPlacement,300);
+if(!state.placementSeen&&!hasProgress(state))setTimeout(openPlacement,300);else setTimeout(function(){dailyQuestPopup()},700);
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-var APP_VERSION="10";
+var APP_VERSION="11";
 var swReg=null;
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
   var hadController=!!navigator.serviceWorker.controller,reloading=false;
