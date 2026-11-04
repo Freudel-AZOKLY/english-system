@@ -1,5 +1,5 @@
 /* English System : fonctionnement hors ligne */
-var CACHE = "english-system-v4";
+var CACHE = "english-system-v5";
 var CORE = ["./", "index.html", "app.js", "content-w01-05.js", "content-w06-09.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));
@@ -18,7 +18,7 @@ self.addEventListener("fetch", function (e) {
   if (!sameOrigin && !isFont) return;
   if (sameOrigin) {
     // Réseau d'abord pour recevoir les mises à jour, cache si hors ligne
-    e.respondWith(fetch(req).then(function (res) {
+    e.respondWith(fetch(req, { cache: "no-cache" }).then(function (res) {
       if (res && res.ok) { var copy = res.clone(); caches.open(CACHE).then(function (c) { c.put(req.mode === "navigate" ? "index.html" : req, copy); }); }
       return res;
     }).catch(function () { return caches.match(req.mode === "navigate" ? "index.html" : req, { ignoreSearch: true }); }));

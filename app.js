@@ -671,6 +671,20 @@ $("resList").innerHTML=RES.map(function(r){return r.g?'<div class="res-group">'+
 selectedDay=todayDay();
 render();
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
+var APP_VERSION="5";
+var swReg=null;
+if("serviceWorker" in navigator&&location.protocol!=="file:"){
+  var hadController=!!navigator.serviceWorker.controller,reloading=false;
+  navigator.serviceWorker.addEventListener("controllerchange",function(){if(!hadController||reloading)return;reloading=true;location.reload()});
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(function(r){swReg=r;r.update().catch(function(){})}).catch(function(){});
+  document.addEventListener("visibilitychange",function(){if(!document.hidden&&swReg)swReg.update().catch(function(){})});
+}
+function forceUpdate(){
+  $("updStatus").textContent="Recherche de mise à jour…";
+  var p=swReg?swReg.update().catch(function(){}):Promise.resolve();
+  p.then(function(){return window.caches?caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}):null}).then(function(){location.reload()}).catch(function(){location.reload()});
+}
+$("updBtn").addEventListener("click",forceUpdate);
+$("appVersion").textContent="Version "+APP_VERSION;
 document.addEventListener("visibilitychange",function(){if(!document.hidden)render()});
 })();
