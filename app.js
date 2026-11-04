@@ -381,7 +381,7 @@ function posInWeek(d){return ((d-1)%7)+1}
 function partIdx(d){return posInWeek(d)<=3?0:1}
 function todayISO(){return isoDate(new Date())}
 function addDaysISO(n){var t=new Date();t.setDate(t.getDate()+n);return isoDate(t)}
-var prefs={voice:"",rate:0.9,sr:true,lang:"en-GB"};
+var prefs={voice:"",rate:1,sr:true,lang:"en-GB"};
 try{Object.assign(prefs,JSON.parse(localStorage.getItem("englishSystem_prefs")||"{}"))}catch(e){}
 function savePrefs(){try{localStorage.setItem("englishSystem_prefs",JSON.stringify(prefs))}catch(e){}}
 function toast(msg){var t=$("toast");t.textContent=msg;t.classList.add("on");clearTimeout(toast.tm);toast.tm=setTimeout(function(){t.classList.remove("on")},2600)}
@@ -498,7 +498,7 @@ function actListening(body,d,k,item,mode){
   var test=mode==="test",plays=0,sents=sentencesOf(item);
   var dict=test?[]:sents.filter(function(s){var n=s.split(/\s+/).length;return n>=5&&n<=14}).slice(0,3);
   body.innerHTML='<h3>'+esc(item.title)+'</h3>'+(test?'<div class="notice">Test : 2 écoutes maximum, sans transcription. Réponds ensuite aux questions.</div>':'')+
-   '<div class="step"><div class="step-n">1</div><div><strong>Écoute sans texte</strong> <span class="tiny muted">Note le sujet et les idées principales.</span><div class="action-row" style="margin-top:6px"><button class="btn primary" data-a="play">▶ Écouter</button><button class="btn ghost" data-a="stop">■ Stop</button><span class="tiny muted" data-a="plays"></span></div></div></div>'+
+   '<div class="step"><div class="step-n">1</div><div><strong>Écoute sans texte</strong> <span class="tiny muted">Note le sujet et les idées principales.</span><div class="action-row" style="margin-top:6px"><button class="btn primary" data-a="play">▶ Écouter</button><button class="btn ghost" data-a="stop">■ Stop</button><select data-a="lrate" aria-label="Vitesse de lecture" style="width:auto"><option value="0.75">Vitesse 0,75</option><option value="0.9">Vitesse 0,9</option><option value="1">Vitesse 1</option><option value="1.15">Vitesse 1,15</option><option value="1.3">Vitesse 1,3</option><option value="1.5">Vitesse 1,5</option></select><span class="tiny muted" data-a="plays"></span></div></div></div>'+
    '<div class="step"><div class="step-n">2</div><div><strong>Questions</strong>'+quizHTML(item.questions,"lq")+'<div class="action-row"><button class="btn" data-a="check">Vérifier</button><span class="tiny" data-a="score"></span></div></div></div>'+
    (test?'':'<div class="step"><div class="step-n">3</div><div><strong>Transcription</strong> <span class="tiny muted">Repère ce que tu n\'avais pas compris. Clique une phrase pour la réécouter.</span><div><button class="btn small" data-a="tr">Afficher la transcription</button></div><div class="transcript hidden" data-a="trbox">'+item.lines.map(function(l){return '<p><b>'+esc(l[0])+' :</b> '+splitSentences(l[1]).map(function(s){return '<span class="sent" tabindex="0">'+esc(s)+'</span>'}).join(" ")+'</p>'}).join("")+'</div></div></div>'+
    '<div class="step"><div class="step-n">4</div><div><strong>Liaisons et contractions</strong> <span class="tiny muted">Dans la transcription, souligne mentalement les formes réduites (I\'m, don\'t, gonna…) et réécoute-les à vitesse lente.</span><div class="action-row" style="margin-top:6px"><button class="btn small" data-a="slow">▶ Réécouter à 0,7</button></div></div></div>'+
@@ -507,6 +507,7 @@ function actListening(body,d,k,item,mode){
   var q=function(s){return body.querySelector(s)};
   q('[data-a="play"]').onclick=function(){if(test&&plays>=2){toast("2 écoutes maximum pour le test.");return}plays++;q('[data-a="plays"]').textContent="Écoute n°"+plays;speakLines(item.lines.map(function(l){return [l[0],l[1]]}))};
   q('[data-a="stop"]').onclick=stopSpeak;
+  var lr=q('[data-a="lrate"]');lr.value=String(prefs.rate);if(!lr.value)lr.value="1";lr.onchange=function(){prefs.rate=+this.value;savePrefs();$("rateSel").value=this.value};
   q('[data-a="check"]').onclick=function(){var r=quizCheck(body,item.questions,"lq");q('[data-a="score"]').textContent=r.ok+" / "+r.total+(r.ans<r.total?" (réponds à toutes les questions)":"");
     if(r.ans===r.total){if(test){var t=state.tests[String(d)]=state.tests[String(d)]||{};t.listen=Math.round(r.ok/r.total*100);persist();renderTests();autoDone(d,k,"Score d'écoute enregistré : "+t.listen+" %")}else autoDone(d,k)}};
   if(test){var rb=q('[data-a="rec"]');if(rb)rb.parentNode.parentNode.remove();return}
@@ -521,7 +522,7 @@ function actListening(body,d,k,item,mode){
 /* ---- Shadowing ---- */
 function actShadow(body,d,k,item){
   var sents=sentencesOf(item),cur=0,auto=false;
-  body.innerHTML='<h3>Shadowing · '+esc(item.title)+'</h3><p class="tiny muted">Écoute une phrase, puis répète-la en imitant le rythme et l\'intonation. Le mode automatique laisse un temps de répétition après chaque phrase.</p><div class="shadow-sent" aria-live="polite"></div><div class="action-row"><button class="btn" data-a="prev">←</button><button class="btn primary" data-a="say">▶ Phrase</button><button class="btn" data-a="next">→</button><button class="btn ghost" data-a="auto">▶ Mode automatique</button><span class="tiny muted num" data-a="pos"></span></div><div class="field" style="margin-top:10px"><label>Vitesse</label><select data-a="rate"><option value="0.7">0,7 (lent)</option><option value="0.85">0,85</option><option value="1" selected>1 (naturel)</option></select></div><h3>Enregistre ta meilleure imitation</h3><div data-a="rec"></div>';
+  body.innerHTML='<h3>Shadowing · '+esc(item.title)+'</h3><p class="tiny muted">Écoute une phrase, puis répète-la en imitant le rythme et l\'intonation. Le mode automatique laisse un temps de répétition après chaque phrase.</p><div class="shadow-sent" aria-live="polite"></div><div class="action-row"><button class="btn" data-a="prev">←</button><button class="btn primary" data-a="say">▶ Phrase</button><button class="btn" data-a="next">→</button><button class="btn ghost" data-a="auto">▶ Mode automatique</button><span class="tiny muted num" data-a="pos"></span></div><div class="field" style="margin-top:10px"><label>Vitesse</label><select data-a="rate"><option value="0.7">0,7 (lent)</option><option value="0.85">0,85</option><option value="1" selected>1 (naturel)</option><option value="1.15">1,15</option><option value="1.3">1,3 (rapide)</option></select></div><h3>Enregistre ta meilleure imitation</h3><div data-a="rec"></div>';
   var q=function(s){return body.querySelector(s)},rate=1;
   function show(){q(".shadow-sent").textContent=sents[cur];q('[data-a="pos"]').textContent=(cur+1)+" / "+sents.length;if(cur===sents.length-1)autoDone(d,k)}
   q('[data-a="rate"]').onchange=function(){rate=+this.value};
