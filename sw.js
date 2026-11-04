@@ -1,5 +1,5 @@
 /* English System : fonctionnement hors ligne */
-var CACHE = "english-system-v5";
+var CACHE = "english-system-v6";
 var CORE = ["./", "index.html", "app.js", "content-w01-05.js", "content-w06-09.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));

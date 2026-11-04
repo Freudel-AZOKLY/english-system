@@ -305,7 +305,7 @@ function renderErrors(){
   $("errList").innerHTML=list.length?'<div class="err-cols" style="padding:0 10px"><div class="colhead">Mon erreur</div><div class="colhead">Correction</div><div class="colhead">Nouvelle phrase</div></div>'+list.map(function(e){return '<div class="err'+(reviewIds.indexOf(e.id)>=0?" review":"")+'"><div class="err-cols"><div class="wrong">'+esc(e.wrong)+'</div><div class="right">'+esc(e.right)+'</div><div class="sent">'+esc(e.sentence||"—")+'</div><div class="meta">'+esc(e.cat)+(e.day?' · jour '+esc(e.day):'')+' · révisée '+e.reviews+' fois</div></div><button class="btn small ghost" data-err="'+esc(e.id)+'" aria-label="Supprimer cette erreur">×</button></div>'}).join(""):'<p class="muted tiny">Ton carnet est vide. Ajoute les erreurs repérées à la réécoute, ou envoie-les ici depuis le correcteur.</p>';
   $("reviewDone").classList.toggle("hidden",!reviewIds.length);
 }
-function addError(e){state.errors.push({id:uid(),wrong:String(e.wrong).slice(0,400),right:String(e.right||"").slice(0,400),sentence:String(e.sentence||"").slice(0,400),cat:e.cat||"grammaire",day:selectedDay,reviews:0});persist();renderErrors()}
+function addError(e){state.errors.push({id:uid(),wrong:String(e.wrong).slice(0,400),right:String(e.right||"").slice(0,400),sentence:String(e.sentence||"").slice(0,400),cat:e.cat||"grammaire",day:selectedDay,reviews:0});ensureCards();persist();renderErrors()}
 
 /* =========== Minuteur =========== */
 var tm={day:0,k:"",total:0,left:0,endAt:0,running:false,iv:null,lock:null,ac:null};
@@ -639,7 +639,7 @@ $("freeMode").addEventListener("change",function(){state.freeMode=this.checked;p
 $("saveJournal").addEventListener("click",function(){var k=String(selectedDay),j=$("journal").value,g=$("customGoal").value.trim();if(j)state.journals[k]=j;else delete state.journals[k];if(g)state.goals[k]=g;else delete state.goals[k];persist();$("journalStatus").textContent="Enregistré pour le jour "+selectedDay+"."});
 $("addErr").addEventListener("click",function(){var w=$("errWrong").value.trim();if(!w){$("errStatus").textContent="Écris d'abord ton erreur.";return}addError({wrong:w,right:$("errRight").value.trim(),sentence:$("errSent").value.trim(),cat:$("errCat").value});["errWrong","errRight","errSent"].forEach(function(id){$(id).value=""});$("errStatus").textContent="Ajoutée.";$("errWrong").focus()});
 $("errSent").addEventListener("keydown",function(e){if(e.key==="Enter")$("addErr").click()});
-$("errList").addEventListener("click",function(e){var b=e.target.closest("[data-err]");if(!b)return;state.errors=state.errors.filter(function(x){return x.id!==b.dataset.err});persist();renderErrors()});
+$("errList").addEventListener("click",function(e){var b=e.target.closest("[data-err]");if(!b)return;state.errors=state.errors.filter(function(x){return x.id!==b.dataset.err});ensureCards();persist();renderErrors()});
 $("reviewBtn").addEventListener("click",function(){if(!state.errors.length){$("errStatus").textContent="Le carnet est vide.";return}reviewIds=state.errors.slice().sort(function(a,b){return a.reviews-b.reviews}).slice(0,5).map(function(e){return e.id});var ids=reviewIds;state.errors.sort(function(a,b){return (ids.indexOf(a.id)>=0)-(ids.indexOf(b.id)>=0)});renderErrors();$("errStatus").textContent="Les 5 erreurs les moins révisées sont en haut. Relis-les à voix haute.";$("errList").scrollTop=0});
 $("reviewDone").addEventListener("click",function(){state.errors.forEach(function(e){if(reviewIds.indexOf(e.id)>=0)e.reviews++});reviewIds=[];persist();renderErrors();$("errStatus").textContent="Révision enregistrée."});
 
@@ -649,6 +649,7 @@ function markExported(){state.lastExport=new Date().toISOString();try{localStora
 function showJson(){$("jsonOut").value=exportJSON();$("jsonOutBox").classList.remove("hidden")}
 function download(){try{var blob=new Blob([exportJSON()],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=exportName();document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},2000);markExported();$("importStatus").textContent="Fichier téléchargé : "+exportName()+"."}catch(e){showJson();$("importStatus").textContent="Téléchargement impossible : copie le JSON affiché."}}
 $("exportBtn").addEventListener("click",download);
+$("showJsonBtn").addEventListener("click",showJson);
 $("shareBtn").addEventListener("click",function(){
   try{var file=new File([exportJSON()],exportName(),{type:"application/json"});
     if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:"English System",text:"Sauvegarde English System"}).then(function(){markExported();$("importStatus").textContent="Sauvegarde envoyée. Importe-la sur l'autre appareil."}).catch(function(e){if(!e||e.name!=="AbortError")download()});return}
@@ -671,7 +672,7 @@ $("resList").innerHTML=RES.map(function(r){return r.g?'<div class="res-group">'+
 selectedDay=todayDay();
 render();
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-var APP_VERSION="5";
+var APP_VERSION="6";
 var swReg=null;
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
   var hadController=!!navigator.serviceWorker.controller,reloading=false;
@@ -685,6 +686,55 @@ function forceUpdate(){
   p.then(function(){return window.caches?caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}):null}).then(function(){location.reload()}).catch(function(){location.reload()});
 }
 $("updBtn").addEventListener("click",forceUpdate);
+/* =========== Diagnostic =========== */
+function runDiagnostic(){
+  var out=$("diagOut");out.innerHTML='<p class="tiny muted"><span class="spinner"></span>Vérification en cours…</p>';
+  var rows=[];function add(st,label,detail,fix){rows.push({st:st,label:label,detail:detail||"",fix:fix||""})}
+  var tasks=[];
+  add("ok","Version de l'app","Version "+APP_VERSION);
+  var standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone===true;
+  add(standalone?"ok":"warn","Installée sur l'écran d'accueil",standalone?"Oui":"Non, ouverte dans le navigateur",standalone?"":"Installe-la (iPhone : Partager → Sur l'écran d'accueil) pour éviter que Safari efface tes données.");
+  add(navigator.onLine?"ok":"warn","Connexion Internet",navigator.onLine?"En ligne":"Hors ligne","Hors ligne, l'app fonctionne mais ne reçoit pas les mises à jour.");
+  try{localStorage.setItem("es_diag","1");var okLS=localStorage.getItem("es_diag")==="1";localStorage.removeItem("es_diag");add(okLS?"ok":"bad","Sauvegarde de ta progression",okLS?"Fonctionne":"Impossible d'écrire","Désactive la navigation privée.")}catch(e){add("bad","Sauvegarde de ta progression","Bloquée","Désactive la navigation privée ou autorise le stockage pour ce site.")}
+  var C=window.ES_CONTENT||{weeks:{},tests:{}},nw=Object.keys(C.weeks).length,nt=Object.keys(C.tests).length;
+  add(nw>=9&&nt>=2?"ok":"bad","Contenu intégré",nw+" semaines, "+nt+" tests mensuels",nw?"":"Recharge l'app avec une connexion.");
+  ensureCards();add("ok","Cartes de révision",Object.keys(state.srs).length+" cartes, "+dueCards().length+" à réviser aujourd'hui");
+  if("serviceWorker" in navigator){tasks.push(navigator.serviceWorker.getRegistration().then(function(r){var ctl=!!navigator.serviceWorker.controller;add(r&&ctl?"ok":"warn","Mises à jour automatiques",r?(ctl?"Actives":"Actives après la prochaine ouverture"):"Non installées","Ferme puis rouvre l'app.")}))}else add("bad","Mises à jour automatiques","Non prises en charge par ce navigateur");
+  if(window.caches){tasks.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.open(k).then(function(c){return c.keys()})}))}).then(function(lists){var urls=[].concat.apply([],lists).map(function(r){return r.url});var need=["app.js","content-w01-05.js","content-w06-09.js","index.html"];var miss=need.filter(function(n){return !urls.some(function(u){return u.indexOf(n)>=0})});add(miss.length?"warn":"ok","Fonctionnement hors ligne",miss.length?"Fichiers pas encore en mémoire : "+miss.join(", "):"Prêt","Ouvre l'app une fois avec une connexion, puis rouvre-la.")}).catch(function(){add("warn","Fonctionnement hors ligne","Vérification impossible")}))}
+  tasks.push(db().then(function(){add("ok","Stockage des enregistrements audio","Fonctionne")}).catch(function(){add("bad","Stockage des enregistrements audio","Indisponible","Désactive la navigation privée.")}));
+  if(navigator.storage&&navigator.storage.persisted)tasks.push(navigator.storage.persisted().then(function(p){add(p?"ok":"warn","Protection contre l'effacement",p?"Données protégées":"Le navigateur peut effacer les données s'il manque de place","Installe l'app et exporte régulièrement tes données.")}));
+  if(!TTS.ok)add("bad","Voix de lecture","Non disponible sur ce navigateur","Utilise Safari, Chrome ou Edge à jour.");
+  else{loadVoices();var gb=TTS.voices.filter(function(v){return /en.GB/i.test(v.lang)}).length,us=TTS.voices.filter(function(v){return /en.US/i.test(v.lang)}).length;var n=TTS.voices.length;
+    add(n>=2?"ok":n===1?"warn":"bad","Voix anglaises installées",n+" voix ("+gb+" britannique(s), "+us+" américaine(s))"+(n?" : "+TTS.voices.slice(0,6).map(function(v){return v.name}).join(", "):""),n>=2?"":"Ajoute des voix anglaises : Réglages → recherche « voix » ou « énoncé » → Voix → Anglais.")}
+  var canRec=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);
+  add(canRec?"ok":"bad","Enregistreur",canRec?"Pris en charge":"Non pris en charge",canRec?"":"Mets à jour iOS ou utilise Chrome.");
+  add(SR?(prefs.sr?"ok":"warn"):"warn","Transcription automatique",SR?(prefs.sr?"Disponible":"Désactivée dans les réglages"):"Non disponible sur ce navigateur",SR?"":"L'audio est quand même enregistré ; la transcription marche sur Chrome, Edge et Android.");
+  add(navigator.clipboard&&navigator.clipboard.writeText?"ok":"warn","Copie des prompts",navigator.clipboard?"Fonctionne":"Copie manuelle","Le texte s'affiche pour être sélectionné.");
+  var shareOK=false;try{shareOK=!!(navigator.canShare&&navigator.canShare({files:[new File(["{}"],"t.json",{type:"application/json"})]}))}catch(e){}
+  add(shareOK?"ok":"warn","Envoi vers un autre appareil",shareOK?"Menu de partage disponible":"Téléchargement du fichier à la place");
+  Promise.all(tasks.map(function(t){return t.catch(function(){})})).then(function(){
+    var order={bad:0,warn:1,ok:2};rows.sort(function(a,b){return order[a.st]-order[b.st]});
+    var nb=rows.filter(function(r){return r.st==="bad"}).length,nw2=rows.filter(function(r){return r.st==="warn"}).length;
+    out.innerHTML='<div class="notice '+(nb?"bad":nw2?"":"info")+'">'+(nb?nb+" problème(s) à corriger.":nw2?"Tout fonctionne, avec "+nw2+" point(s) à améliorer.":"Tout fonctionne parfaitement sur cet appareil.")+'</div><div class="diag-list">'+rows.map(function(r){return '<div class="diag-row '+r.st+'"><span class="diag-ic">'+(r.st==="ok"?"✓":r.st==="warn"?"!":"✕")+'</span><div><strong>'+esc(r.label)+'</strong><div class="tiny muted">'+esc(r.detail)+'</div>'+(r.fix&&r.st!=="ok"?'<div class="tiny diag-fix">'+esc(r.fix)+'</div>':'')+'</div></div>'}).join("")+'</div>';
+  });
+}
+function testVoice(){var res=$("diagLive");stopSpeak();var t0=Date.now(),started=false;
+  if(!TTS.ok){res.textContent="✕ Voix non disponible.";return}
+  var u=new SpeechSynthesisUtterance("Hello Irène. If you can hear me, the first voice works.");var v=pickVoice(0);if(v){u.voice=v;u.lang=v.lang}else u.lang=prefs.lang;u.rate=prefs.rate;
+  u.onstart=function(){started=true};u.onend=function(){var v1=pickVoice(1);var u2=new SpeechSynthesisUtterance("And this is the second voice, for dialogues.");if(v1){u2.voice=v1;u2.lang=v1.lang}if(!v1||!v||v1.name===v.name)u2.pitch=0.75;u2.rate=prefs.rate;keepU.push(u2);speechSynthesis.speak(u2);res.textContent="✓ Voix 1 : "+(v?v.name:"par défaut")+" · Voix 2 : "+(v1&&v&&v1.name!==v.name?v1.name:"même voix, plus grave")+". Si tu n'entends rien, vérifie le mode silencieux et le volume."};
+  keepU.push(u);speechSynthesis.speak(u);if(isIOS)speechSynthesis.resume();res.textContent="Lecture en cours…";
+  setTimeout(function(){if(!started)res.textContent="! La voix n'a pas démarré. Sur iPhone : désactive le mode silencieux, monte le volume, puis réessaie."},3500)}
+function testMic(){var res=$("diagLive");if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)){res.textContent="✕ Enregistrement non pris en charge.";return}
+  stopSpeak();res.textContent="Parle pendant 3 secondes…";
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){var mime=["audio/webm;codecs=opus","audio/webm","audio/mp4"].filter(function(m){return MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(m)})[0];var mr=new MediaRecorder(stream,mime?{mimeType:mime}:undefined),ch=[];mr.ondataavailable=function(e){if(e.data.size)ch.push(e.data)};
+    var heard="",r=null;if(SR&&prefs.sr){try{r=new SR();r.lang=prefs.lang;r.interimResults=true;r.onresult=function(e){heard=Array.prototype.map.call(e.results,function(x){return x[0].transcript}).join(" ")};r.onerror=function(){};r.start()}catch(e){r=null}}
+    mr.onstop=function(){stream.getTracks().forEach(function(t){t.stop()});var blob=new Blob(ch,{type:mr.mimeType||mime});var a=new Audio(URL.createObjectURL(blob));
+      res.textContent="✓ Micro OK ("+Math.round(blob.size/1024)+" Ko enregistrés). Réécoute en cours."+(SR&&prefs.sr?(heard?" Transcription : « "+heard+" »":" ! Aucune transcription reçue (normal sur certains iPhone)."):"");a.play().catch(function(){res.textContent+=" Touche à nouveau pour réécouter."})};
+    mr.start();setTimeout(function(){try{r&&r.stop()}catch(e){}setTimeout(function(){mr.stop()},300)},3000)}).catch(function(){res.textContent="✕ Micro refusé. iPhone : Réglages → Safari → Micro → Autoriser (ou Réglages → l'app)."})}
+$("diagBtn").addEventListener("click",runDiagnostic);
+$("diagVoice").addEventListener("click",testVoice);
+$("diagMic").addEventListener("click",testMic);
+
 $("appVersion").textContent="Version "+APP_VERSION;
 document.addEventListener("visibilitychange",function(){if(!document.hidden)render()});
 })();
