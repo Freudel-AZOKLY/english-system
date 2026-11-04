@@ -114,7 +114,7 @@ ES.weeks[7]={
    ["He works as ___ analyst in Paris.","an"],
    ["___ students often feel stressed before exams. (laisse vide si aucun article)","Ø"],
    ["Can you send me ___ charts we discussed?","the"]]},
- vocab:[["progress","avancement","How is your progress?"],["duplicate","doublon","I removed all the duplicates."],["missing value","valeur manquante","Five percent of the dates were missing."],["to document","documenter","Always document your choices."],["descriptive statistics","statistiques descriptives","First, I'll run descriptive statistics."],["chart","graphique","Can you send me the charts?"],["source","source","The data comes from three sources."],["useless","inutile","A model is useless if nobody understands it."],["to define","définir","Define the question clearly."],["profitable","rentable","Which product is the most profitable?"],["draft","brouillon","I've written a first draft."],["suitable","adapté","Is this method suitable?"],["to be available","être disponible","I'm available on Tuesday."],["thank you in advance","merci d'avance","Thank you in advance for your help."],["best regards","cordialement","Best regards, Irène"]]
+ vocab:[["progress","avancement","How is your work progressing?"],["duplicate","doublon","I removed all the duplicates."],["missing value","valeur manquante","Five percent of the dates were missing."],["to document","documenter","Always document your choices."],["descriptive statistics","statistiques descriptives","First, I'll run descriptive statistics."],["chart","graphique","Can you send me the charts?"],["source","source","The data comes from three sources."],["useless","inutile","A model is useless if nobody understands it."],["to define","définir","Define the question clearly."],["profitable","rentable","Which product is the most profitable?"],["draft","brouillon","I've written a first draft."],["suitable","adapté","Is this method suitable?"],["to be available","être disponible","I'm available on Tuesday."],["thank you in advance","merci d'avance","Thank you in advance for your help."],["best regards","cordialement","Best regards, Irène"]]
 };
 
 ES.weeks[8]={
@@ -123,7 +123,7 @@ ES.weeks[8]={
  listening:[
   {title:"The day I lost my laptop",lines:[
    ["Chloé","It happened two years ago, on a Friday evening. I was travelling home by train after a long week. I was very tired, and I was listening to music with my eyes closed."],
-   ["Chloé","When the train arrived, I took my bag and got off quickly because it was raining and I wanted to catch my bus. While I was waiting at the bus stop, I suddenly realised that my laptop wasn't in my bag. I left it on the train!"],
+   ["Chloé","When the train arrived, I took my bag and got off quickly because it was raining and I wanted to catch my bus. While I was waiting at the bus stop, I suddenly realised that my laptop wasn't in my bag. I had left it on the train!"],
    ["Chloé","I panicked, because my whole thesis was on it. I didn't have a backup. I ran back to the station, but the train was already leaving."],
    ["Chloé","Luckily, a kind passenger found it and gave it to the staff. Two days later, I picked it up at the lost property office. Since that day, I always save my work in the cloud."]],
   questions:[
@@ -134,7 +134,7 @@ ES.weeks[8]={
   {title:"An unexpected meeting",lines:[
    ["Paul","Last summer, I was doing a language course in Dublin. One afternoon, while I was walking along the river, it started to rain heavily. I ran into a small bookshop to wait."],
    ["Paul","While I was looking at the books, an old man started talking to me. He was the owner. At first, I understood only half of what he said, because he was speaking fast and his accent was strong."],
-   ["Paul","But he was so friendly that I kept asking questions. We talked for more than an hour about Irish writers, history and music. By the end, I was understanding much more."],
+   ["Paul","But he was so friendly that I kept asking questions. We talked for more than an hour about Irish writers, history and music. By the end, I understood much more."],
    ["Paul","Before I left, he gave me a book of short stories. I read it during the rest of the course, and I still have it on my shelf."]],
   questions:[
    ["Why did Paul go into the bookshop?",["To buy a book","Because it started raining","To meet a friend"],1],
@@ -206,7 +206,7 @@ ES.weeks[9]={
     ["What do online courses require?",["More discipline","More money","A classroom"],0],
     ["What is the completion rate for many free online courses?",["Below 10%","About 50%","Above 80%"],0],
     ["What do many experts recommend?",["Only online","Only classroom","A combination of both"],2]]},
-  {title:"Two ways to measure success",text:"Imagine two students preparing for an English exam. Student A studies grammar books for three hours a day. Student B studies for only one hour and a half, but she spends half of that time speaking and recording herself.\n\nAfter three months, Student A knows more rules and can complete written exercises faster. But Student B speaks more fluently and makes fewer mistakes when she talks, even though she has studied less in total.\n\nWhich student is more successful? It depends on the goal. If the exam is mainly written, Student A has an advantage. If the goal is to communicate, Student B is clearly better prepared. The lesson is simple: the most effective study plan is not the longest one, but the one that matches your real objective.",
+  {title:"Two ways to measure success",text:"Imagine two students preparing for an English exam. Student A studies grammar books for three hours a day. Student B studies for only an hour and a half, but she spends half of that time speaking and recording herself.\n\nAfter three months, Student A knows more rules and can complete written exercises faster. But Student B speaks more fluently and makes fewer mistakes when she talks, even though she has studied less in total.\n\nWhich student is more successful? It depends on the goal. If the exam is mainly written, Student A has an advantage. If the goal is to communicate, Student B is clearly better prepared. The lesson is simple: the most effective study plan is not the longest one, but the one that matches your real objective.",
    gloss:[["to measure","mesurer"],["to record oneself","s'enregistrer"],["fluently","couramment"],["effective","efficace"],["to match","correspondre à"]],
    questions:[
     ["How long does Student B study per day?",["One and a half hours","Three hours","Thirty minutes"],0],
@@ -221,7 +221,7 @@ ES.weeks[9]={
    ["This is the ___ (good) option for me.","best"],
    ["The Paris lab was ___ (big) than the Nantes lab.","bigger"],
    ["It was the ___ (bad) day of my life.","worst"],
-   ["Python is not as old ___ R.","as"],
+   ["R is not as old ___ Python.","as"],
    ["Nantes is ___ (quiet) than Paris.","quieter"],
    ["That was the ___ (important) factor.","most important"]]},
  vocab:[["it depends on","ça dépend de","It depends on your goal."],["pros and cons","avantages et inconvénients","I made a list of pros and cons."],["prestigious","prestigieux","The Paris lab was more prestigious."],["income","revenu","Half of my income went on rent."],["rent","loyer","The rent is very high."],["factor","facteur","That was the most important factor."],["on the side","à côté, en parallèle","Learn Python on the side."],["practical","pratique","That's the most practical solution."],["to require","exiger","It requires discipline."],["to give up","abandonner","It's easy to give up."],["feedback","retour","I need feedback on my speaking."],["effective","efficace","This method is more effective."],["fewer","moins de (dénombrable)","She makes fewer mistakes."],["to match","correspondre","Choose a plan that matches your goal."],["clearly","clairement","She is clearly better prepared."]]
@@ -261,7 +261,7 @@ ES.tests[60]={
   ["Host","And what do you do now?"],
   ["Ruth","I'm a data analyst for a charity that works on education. It's funny, because I hated maths at school. But when I started using spreadsheets to follow my pupils' progress, I discovered that I really enjoyed it."],
   ["Host","How did you make the change?"],
-  ["Ruth","I followed an online course in the evenings for about a year. It wasn't easy. Several times I wanted to give up. Then I did a three-month internship, and the charity offered me a job at the end."],
+  ["Ruth","I took an online course in the evenings for about a year. It wasn't easy. Several times I wanted to give up. Then I did a three-month internship, and the charity offered me a job at the end."],
   ["Host","Do you miss teaching?"],
   ["Ruth","Sometimes, yes. But in a way I'm still helping children: my analyses help the charity decide where to open new programmes. And I have my weekends back!"]],
   questions:[

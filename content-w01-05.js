@@ -55,7 +55,7 @@ ES.weeks[1]={
    ["I usually ___ (take) the bus to university.","take"],
    ["This week, we ___ (use) Python instead of R.","are using|'re using"],
    ["He ___ (not / like) coffee.","doesn't like|does not like"],
-   ["___ you understand the question?","Do"],
+   ["___ you understand the question?","Do|Did"],
    ["Right now, Sara ___ (clean) the data.","is cleaning|'s cleaning"],
    ["My parents ___ (live) in Lyon.","live"]]},
  vocab:[["to get up","se lever","I get up at seven on weekdays."],["weekday","jour de semaine","On weekdays I study at the library."],["internship","stage","I'm doing an internship in a research lab."],["dataset","jeu de données","The dataset has two million rows."],["to clean data","nettoyer des données","Cleaning data takes a lot of time."],["meeting","réunion","We have a team meeting every Monday."],["degree","diplôme","She is doing a master's degree in econometrics."],["part-time","à temps partiel","He works part-time in a shop."],["to share","partager","I share a flat with a friend."],["at the moment","en ce moment","At the moment, I'm learning Python."],["usually","d'habitude","I usually have tea for breakfast."],["to attend","assister à","I attend lectures every morning."],["busy","occupé, chargé","My Mondays are always busy."],["to improve","améliorer","I want to improve my speaking."],["nice to meet you","enchanté(e)","Hi, I'm Irène. Nice to meet you."]]
@@ -235,7 +235,7 @@ ES.weeks[4]={
    ["I ___ (never / be) to Ireland.","have never been|'ve never been"],
    ["She ___ (finish) her report yesterday.","finished"],
    ["Have you ever ___ (use) Stata?","used"],
-   ["We ___ (live) in Angers since 2022.","have lived|'ve lived"],
+   ["We ___ (live) in Angers since 2022.","have lived|'ve lived|have been living|'ve been living"],
    ["They ___ (go) to London last summer.","went"],
    ["He ___ (not / send) the email yet.","hasn't sent|has not sent"],
    ["I ___ (know) her for five years.","have known|'ve known"],
@@ -256,7 +256,7 @@ ES.weeks[5]={
    ["Irène","Innovation in agriculture. I want to study how plant variety protection affects research."],
    ["Leo","Sounds great. And if it doesn't work out?"],
    ["Irène","Then I'll look for a job as a data analyst. But I'm going to do my best to get the PhD."],
-   ["Leo","I'm sure it'll be fine. I'll help you prepare the interview if you want."],
+   ["Leo","I'm sure it'll be fine. I'll help you prepare for the interview if you want."],
    ["Irène","Really? Thanks, Leo. That would be very helpful."]],
   questions:[
    ["What is Irène going to apply for?",["A job in London","A PhD","A scholarship in Spain"],1],
@@ -293,8 +293,8 @@ ES.weeks[5]={
   ex:[
    ["I've decided: I ___ (apply) for a PhD.","am going to apply|'m going to apply"],
    ["The phone is ringing. — I ___ (answer) it!","'ll answer|will answer"],
-   ["We ___ (meet) the professor next Tuesday at 10.","are meeting|'re meeting"],
-   ["I think it ___ (be) a great event.","will be|'ll be"],
+   ["We ___ (meet) the professor next Tuesday at 10.","are meeting|'re meeting|are going to meet|'re going to meet"],
+   ["I think it ___ (be) a great event.","will be|'ll be|is going to be|'s going to be"],
    ["If it ___ (rain), we'll stay inside.","rains"],
    ["Look at those clouds! It ___ (rain).","is going to rain|'s going to rain"],
    ["Don't worry, I ___ (not / forget).","won't forget|will not forget"],

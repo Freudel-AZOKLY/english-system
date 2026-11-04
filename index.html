@@ -258,6 +258,12 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
 .badge.on{opacity:1;filter:none;border-color:var(--amber-line);background:var(--amber-bg)}
 .badge-ic{font-size:18px;color:var(--amber)}.badge-n{font:600 13px var(--f-display)}
 @media(max-width:600px){.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.game-opts{grid-template-columns:1fr}}
+.pl-item{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.pl-res,.stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0}
+.pl-res>div,.stat-row>div{border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--panel2);display:grid;gap:4px}
+.pl-res b,.stat-row b{font:700 20px var(--f-display);color:var(--cyan)}
+.day-cell.skipped{opacity:.35;text-decoration:line-through}
+@media(max-width:600px){.pl-res,.stat-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#0d2941;border:1px solid var(--blue);color:var(--text);padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:calc(100% - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .prompt-box{font:12px/1.5 var(--f-mono);min-height:120px}
@@ -298,6 +304,8 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <div class="stat-note" id="xpStat" style="margin-top:4px">XP total : 0</div>
   </section>
 </div>
+
+<section class="panel hidden" id="placement" style="margin-bottom:16px;border-color:var(--violet-line)"></section>
 
 <div class="day-banner" id="dayBanner">
   <div style="min-width:0">
@@ -406,6 +414,11 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <div class="table-box" id="testTable"></div>
   </section>
 
+  <section class="panel" id="stats">
+    <div class="panel-head"><h2>▲ Statistiques</h2><span class="pill">mises à jour automatiquement</span></div>
+    <div id="statsBox"><p class="tiny muted">Calcul…</p></div>
+  </section>
+
   <section class="panel">
     <div class="panel-head"><h2>✕ My English Mistakes</h2><span class="pill num" id="errCount">0</span></div>
     <p class="muted tiny">L'habitude la plus importante du programme. Pour chaque erreur : la forme fautive, la correction, et une nouvelle phrase à toi qui utilise la bonne forme. Chaque soir, relis 5 erreurs.</p>
@@ -421,7 +434,7 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
   <section class="panel">
     <div class="panel-head"><h2>▦ Carte de progression</h2><span class="pill">300 jours · 43 semaines · 10 mois</span></div>
     <div class="day-list" id="dayMap"></div>
-    <div class="legend"><span><i style="background:#103222;border-color:#24744b"></i>Complet</span><span><i style="background:#0f2433;border-color:#2b5675"></i>Partiel</span><span><i style="border-color:#4a2733"></i>Manqué</span><span><i style="border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)"></i>Sélectionné</span><span><i style="outline:1px dashed var(--amber);border:0"></i>Aujourd'hui</span><span style="color:var(--amber)">◆ Épreuve hebdo</span><span style="color:var(--violet)">● Test mensuel</span></div>
+    <div class="legend"><span><i style="background:#103222;border-color:#24744b"></i>Complet</span><span><i style="background:#0f2433;border-color:#2b5675"></i>Partiel</span><span><i style="border-color:#4a2733"></i>Manqué</span><span><i style="border-color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue)"></i>Sélectionné</span><span><i style="outline:1px dashed var(--amber);border:0"></i>Aujourd'hui</span><span style="text-decoration:line-through">Dispensé</span><span style="color:var(--amber)">◆ Épreuve hebdo</span><span style="color:var(--violet)">● Test mensuel</span></div>
   </section>
 </div>
 
@@ -448,6 +461,13 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <div class="field"><label for="startDate">Date de début (jour 1)</label><input type="date" id="startDate"></div>
     <div class="field"><label for="track">Parcours des sujets</label><select id="track"><option value="acad">Académique & recherche (économétrie, data)</option><option value="pro">Professionnel (entreprise, entretiens)</option></select></div>
     <label class="tiny" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="freeMode"> Mode libre : débloquer les jours à venir</label>
+    <div class="field" style="margin-top:12px"><label for="offsetSel">Point de départ du programme</label><select id="offsetSel"><option value="1">Jour 1 · mois 1</option><option value="31">Jour 31 · mois 2</option><option value="61">Jour 61 · mois 3</option><option value="91">Jour 91 · mois 4</option><option value="121">Jour 121 · mois 5</option><option value="151">Jour 151 · mois 6</option><option value="181">Jour 181 · mois 7</option><option value="211">Jour 211 · mois 8</option><option value="241">Jour 241 · mois 9</option><option value="271">Jour 271 · mois 10</option></select></div>
+    <div class="action-row"><button class="btn small" id="placementBtn">🧭 Test de positionnement</button></div>
+    <div class="confirm-zone" id="placementWarn"><span class="tiny" style="color:var(--amber)">Le résultat peut déplacer ton jour actuel. Ta progression est conservée.</span><button class="btn small primary" id="placementGo">Lancer le test</button><button class="btn small" id="placementNo">Annuler</button></div>
+    <hr class="separator">
+    <h3>Rappel quotidien</h3>
+    <div class="action-row"><input type="time" id="remTime" value="18:30" aria-label="Heure du rappel" style="width:auto"><button class="btn small" id="icsBtn">Ajouter à mon calendrier</button></div>
+    <p class="tiny muted" id="icsStatus" style="margin-top:6px">Crée un rendez-vous quotidien de 2 h avec une alerte, dans l'app Calendrier de ton téléphone ou de ton ordinateur.</p>
     <hr class="separator">
     <h3>Voix et micro</h3>
     <div class="field"><label for="voiceSel">Voix anglaise pour les écoutes</label><select id="voiceSel"><option value="">Automatique</option></select></div>
@@ -486,6 +506,18 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
     <div class="action-row"><button class="btn primary" id="shareBtn">Envoyer vers un autre appareil</button><button class="btn" id="exportBtn">Télécharger (.json)</button><button class="btn ghost" id="showJsonBtn">Afficher le JSON</button></div>
     <div class="field hidden" id="jsonOutBox" style="margin-top:10px"><label for="jsonOut">Sauvegarde (copie-la dans un fichier)</label><textarea id="jsonOut" readonly style="min-height:120px;font:12px var(--f-mono)"></textarea><button class="btn small" id="copyJson">Copier</button></div>
     <hr class="separator">
+    <h3>Enregistrements audio</h3>
+    <p class="tiny muted">Ils ne sont pas inclus dans la sauvegarde ci-dessus. Exporte-les régulièrement : ce sont tes preuves de progrès.</p>
+    <div class="action-row"><button class="btn small" id="recExport">Exporter mes enregistrements (.zip)</button><label class="btn small ghost" for="recImport" style="cursor:pointer">Importer une archive</label><input type="file" id="recImport" accept=".zip,application/zip" class="hidden"></div>
+    <p class="tiny" id="recStatus" style="margin-top:6px"></p>
+    <hr class="separator">
+    <h3>Synchronisation automatique (optionnelle)</h3>
+    <div id="ghOff"><p class="tiny muted">Synchronise ta progression entre ton téléphone et ton ordinateur via ton compte GitHub, dans un fichier privé. Crée une clé : github.com → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate, avec uniquement la permission <b>Gists : Read and write</b>. Colle-la ici sur chaque appareil.</p>
+      <div class="action-row"><input type="text" id="ghToken" placeholder="github_pat_…" autocomplete="off" spellcheck="false" style="flex:1;min-width:0"><button class="btn small primary" id="ghConnect">Activer</button></div>
+      <p class="tiny muted" style="margin-top:6px">La clé reste uniquement sur cet appareil. N'utilise pas cette option sur un ordinateur partagé.</p></div>
+    <div id="ghOn" class="hidden"><div class="action-row"><button class="btn small" id="ghNow">Synchroniser maintenant</button><button class="btn small ghost" id="ghDisconnect">Désactiver</button></div></div>
+    <p class="tiny" id="ghStatus" style="margin-top:6px"></p>
+    <hr class="separator">
     <h3>Importer une sauvegarde</h3>
     <div class="field"><label for="importFile">Fichier .json (versions 1, 2 et 3)</label><input type="file" id="importFile" accept="application/json,.json"></div>
     <details><summary>…ou coller le JSON</summary><div class="field"><textarea id="importText" style="font:12px var(--f-mono)" aria-label="JSON à importer"></textarea></div><button class="btn small" id="importTextBtn">Importer le texte</button></details>
@@ -511,15 +543,16 @@ footer{padding:24px 0;color:var(--dim);font-size:11px;text-align:center;max-widt
   </div>
 </div>
 
-<script src="content-w01-05.js?v=8"></script>
-<script src="content-w06-09.js?v=8"></script>
-<script src="content-w10-15.js?v=8"></script>
-<script src="content-w16-21.js?v=8"></script>
-<script src="content-w22-27.js?v=8"></script>
-<script src="content-w28-33.js?v=8"></script>
-<script src="content-w34-38.js?v=8"></script>
-<script src="content-w39-43.js?v=8"></script>
-<script src="content-tests.js?v=8"></script>
-<script src="app.js?v=8"></script>
+<script src="content-w01-05.js?v=9"></script>
+<script src="content-w06-09.js?v=9"></script>
+<script src="content-w10-15.js?v=9"></script>
+<script src="content-w16-21.js?v=9"></script>
+<script src="content-w22-27.js?v=9"></script>
+<script src="content-w28-33.js?v=9"></script>
+<script src="content-w34-38.js?v=9"></script>
+<script src="content-w39-43.js?v=9"></script>
+<script src="content-tests.js?v=9"></script>
+<script src="placement-data.js?v=9"></script>
+<script src="app.js?v=9"></script>
 </body>
 </html>

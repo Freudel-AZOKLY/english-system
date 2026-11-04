@@ -25,6 +25,16 @@ Sur iPhone, installe-la bien sur l'écran d'accueil : Safari peut effacer les do
 
 Contenu intégré : les 300 jours (43 semaines d'écoutes, de lectures, de grammaire et de vocabulaire, du niveau A2 au C1) et les 10 tests mensuels.
 
+## Nouveautés de la version 9
+
+- Test de positionnement au premier lancement (et dans les réglages)
+- Rappel quotidien à ajouter au calendrier
+- Export et import des enregistrements audio (.zip)
+- Statistiques : heures par semaine, pauses et hésitations, débit
+- Écoutes avec accents variés à partir de la semaine 14, selon les voix de l'appareil
+- Synchronisation automatique optionnelle via un gist GitHub privé
+- Contenu relu et corrigé (54 points)
+
 ## Passer d'un appareil à l'autre
 
 1. Sur l'appareil où tu as travaillé : **Mes données → Envoyer vers un autre appareil**
