@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" class="booting">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -373,13 +373,111 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
 .toast{position:fixed;left:50%;transform:translate(-50%,20px);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#0d2941;border:1px solid var(--blue);color:var(--text);padding:10px 16px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;max-width:calc(100% - 32px)}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .prompt-box{font:12px/1.5 var(--f-mono);min-height:120px}
+
+/* ---------- Lancement ---------- */
+html.booting body{overflow:hidden}
+.boot{position:fixed;inset:0;z-index:200;background:radial-gradient(ellipse at 50% 30%,#0f2741 0%,#070b12 62%);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:max(24px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));transition:opacity .55s ease,transform .55s ease}
+.boot.out{opacity:0;transform:scale(1.04);pointer-events:none}.boot.gone{display:none}
+.bt-grid{position:fixed;inset:0;background-image:linear-gradient(#38bdf80d 1px,transparent 1px),linear-gradient(90deg,#38bdf80d 1px,transparent 1px);background-size:34px 34px;mask-image:radial-gradient(ellipse at 50% 40%,#000 20%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 20%,transparent 70%);animation:btgrid 8s linear infinite;pointer-events:none}
+@keyframes btgrid{to{background-position:0 34px,34px 0}}
+.bt-splash{margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;transition:all .5s ease}
+.boot.menu .bt-splash{display:none}
+.bt-logo svg{width:100%;height:100%;display:block;overflow:visible}
+.bt-logo.big{width:132px;height:132px;filter:drop-shadow(0 0 28px #38bdf855)}
+.bt-logo.sm{width:58px;height:58px;margin:0 auto 6px;filter:drop-shadow(0 0 16px #38bdf844)}
+.bt-logo.big .lg-o{stroke-dasharray:340;stroke-dashoffset:340;animation:btdraw 1s .1s cubic-bezier(.6,0,.2,1) forwards}
+.bt-logo.big .lg-i{stroke-dasharray:280;stroke-dashoffset:280;animation:btdraw 1s .35s ease forwards}
+.bt-logo.big .lg-e{opacity:0;transform-origin:64px 64px;animation:btpop .5s .7s cubic-bezier(.2,1.4,.4,1) forwards}
+.bt-logo .lg-s{transform-origin:94px 36px;animation:bttw 2.4s 1s ease-in-out infinite}
+.bt-logo.big .lg-s{opacity:0;animation:btpop .4s 1.05s ease forwards,bttw 2.4s 1.5s ease-in-out infinite}
+@keyframes btdraw{to{stroke-dashoffset:0}}
+@keyframes btpop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes bttw{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(.7) rotate(45deg)}}
+.bt-name{font:700 clamp(24px,7vw,34px)/1 var(--f-display);letter-spacing:.22em;margin-top:8px;background:linear-gradient(90deg,#e7f0fb,#7dd3fc,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;animation:btup .6s .55s ease forwards}
+.bt-tag{font:500 11px var(--f-mono);letter-spacing:.18em;color:var(--muted);opacity:0;animation:btup .6s .75s ease forwards}
+.bt-load{width:180px;height:3px;background:#16283b;border-radius:2px;overflow:hidden;margin-top:14px}
+.bt-load span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--violet));box-shadow:0 0 10px var(--blue);animation:btload 1.7s .1s ease-in-out forwards}
+@keyframes btload{to{width:100%}}
+.bt-sys{font:600 11px var(--f-mono);color:var(--blue);letter-spacing:.08em;opacity:0;animation:btup .4s .9s ease forwards}
+@keyframes btup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.bt-stage{width:100%;max-width:520px;position:relative}.boot.menu .bt-stage{margin:auto}
+.bt-stage.bt-in .bt-card{animation:btcard .45s ease both}
+@keyframes btcard{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.bt-card{position:relative;border:1px solid #2a5577;background:linear-gradient(180deg,#0d1828f2,#0a1220f2);border-radius:16px;padding:22px 20px;box-shadow:0 0 0 1px #38bdf810 inset,0 20px 60px #0009,0 0 40px #38bdf814}
+.bt-card::before,.bt-card::after{content:"";position:absolute;width:16px;height:16px;border:2px solid var(--blue)}
+.bt-card::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:16px}
+.bt-card::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:16px}
+.bt-eyebrow{font:600 11px var(--f-mono);color:var(--blue);letter-spacing:.08em;text-align:center}
+.bt-h{font:700 clamp(21px,5.5vw,26px)/1.2 var(--f-display);letter-spacing:.03em;text-align:center;margin:6px 0 10px}
+.bt-p{color:var(--muted);text-align:center;margin:0 0 14px}
+.bt-list{list-style:none;padding:0;margin:0 0 18px;display:grid;gap:10px}
+.bt-list li{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);background:var(--panel2);border-radius:11px;padding:10px 12px;font-size:14px;color:var(--muted)}
+.bt-list li b{color:var(--text)}.bt-list li>span{color:var(--blue);font-size:12px;margin-top:3px}
+.bt-actions{display:flex;flex-direction:column;gap:8px;margin-top:6px}.bt-actions.row{flex-direction:row;flex-wrap:wrap;justify-content:center;margin-top:14px}
+.bt-big{padding:13px 16px;font-size:16px;letter-spacing:.02em}
+.bt-err{color:var(--red);min-height:1em;margin:6px 0 0;text-align:center}
+.bt-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}.bt-seg.col{grid-template-columns:1fr}
+.bt-seg label{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px 11px;font-size:13.5px;cursor:pointer;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400}
+.bt-seg label:has(input:checked){border-color:var(--blue);background:#0d2941;color:var(--text)}
+.bt-seg input{margin-top:3px;accent-color:var(--blue)}
+.bt-profiles{display:grid;gap:9px;margin-top:4px}
+.bt-prof{display:flex;gap:8px;align-items:center}
+.bt-prof-main{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line2);background:var(--panel2);border-radius:12px;padding:11px 12px;color:var(--text);transition:border-color .15s,background .15s,transform .15s}
+.bt-prof-main:hover{border-color:var(--blue);background:#0d2236}.bt-prof-main:active{transform:scale(.99)}
+.bt-prof.last .bt-prof-main{border-color:var(--blue);box-shadow:0 0 18px #38bdf822}
+.bt-av{flex:none;width:44px;height:44px;display:grid;place-items:center;font:700 19px var(--f-display);color:var(--blue);border:1px solid var(--blue);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:#0d2941}
+.bt-pi{display:flex;flex-direction:column;min-width:0;flex:1}.bt-pi b{font:700 16px var(--f-display);letter-spacing:.03em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bt-pi .tiny{color:var(--cyan)}.bt-pi .tiny.muted{color:var(--muted)}
+.bt-go{flex:none;font:600 12px var(--f-display);color:var(--blue);letter-spacing:.06em}
+.bt-auto{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:12px;color:var(--muted)}
+.bt-note{text-align:center;margin:10px 0 0}
+.sigil svg{width:40px;height:40px}
+/* ---------- Lecteur audio ---------- */
+.player{border:1px solid var(--line2);background:linear-gradient(180deg,#0c1a2a,#0a1320);border-radius:12px;padding:10px 12px;max-width:560px}
+.player.compact{padding:8px 10px}
+.pl-top{display:flex;align-items:center;gap:8px}
+.pl-btn{flex:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--btn-line);background:var(--btn-bg);color:#dff5ff;display:grid;place-items:center;font-size:15px;line-height:1;padding:0}
+.pl-btn:hover{background:var(--btn-hover)}.pl-btn:active{transform:scale(.95)}
+.pl-main{width:48px;height:48px;border-radius:50%;font-size:19px;background:linear-gradient(135deg,#1476bb,#174c91);border-color:var(--blue);color:#fff;box-shadow:0 0 16px #38bdf833}
+.pl-main.on{box-shadow:0 0 0 3px #38bdf833,0 0 22px #38bdf866;animation:plpulse 1.6s ease-in-out infinite}
+@keyframes plpulse{50%{box-shadow:0 0 0 6px #38bdf811,0 0 26px #38bdf888}}
+.compact .pl-main{width:40px;height:40px;font-size:16px}
+.pl-mid{flex:1;min-width:0}
+.pl-title{font:600 12px/1.25 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--cyan)}
+.pl-bar{height:5px;background:#16283b;border-radius:3px;overflow:hidden;margin:5px 0 3px}.pl-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--violet));transition:width .4s ease}
+.pl-meta{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted)}
+.pl-rates{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:9px;max-width:420px}
+.pl-rate{position:relative;border:1px solid var(--line2);background:var(--panel2);color:var(--muted);border-radius:999px;padding:5px 0;font:600 12px var(--f-mono);white-space:nowrap;text-align:center}
+.pl-rate.rec{border-color:var(--amber-line);color:var(--amber-text)}
+.pl-rate.on{background:var(--blue2);border-color:var(--blue);color:#fff}
+.pl-rate i{font-style:normal;color:var(--amber);margin-left:2px}.pl-rate.on i{color:#ffe08a}
+.pl-hint{margin-top:5px}
+.sent.now{background:#1d4f7a;box-shadow:0 0 0 2px #1d4f7a;color:#fff}
+.reading.clickable .sent{cursor:pointer}
+@media (max-width:420px){.pl-btn{width:34px;height:34px}.pl-main{width:44px;height:44px}.pl-rate{font-size:11px}}
+.prof-cur{display:flex;gap:12px;align-items:center}.prof-cur b{font:700 17px var(--f-display);letter-spacing:.03em}
+#profilePanel{margin-bottom:16px}
+.sigil{clip-path:none;border:0;box-shadow:none;width:48px;height:48px}
+@media (prefers-reduced-motion:reduce){.bt-logo *,.bt-name,.bt-tag,.bt-sys,.bt-load span,.bt-grid,.bt-card{animation:none!important;opacity:1!important;stroke-dashoffset:0!important}.bt-load span{width:100%}}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="esg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset=".55" stop-color="#38bdf8"/><stop offset="1" stop-color="#8b7cf6"/></linearGradient><filter id="esglow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs></svg>
+<div id="boot" class="boot">
+  <div class="bt-grid" aria-hidden="true"></div>
+  <div class="bt-splash">
+    <div class="bt-logo big" id="bootLogo"><svg viewBox="0 0 128 128" aria-hidden="true"><g class="lg-hex" filter="url(#esglow)" fill="none" stroke="url(#esg)" stroke-linejoin="round"><path class="lg-o" d="M64 8 113 36v56L64 120 15 92V36z" stroke-width="5"/><path class="lg-i" d="M64 20 102.5 42v44L64 108 25.5 86V42z" stroke-width="1.6" opacity=".55"/></g><g filter="url(#esglow)"><path class="lg-e" fill="url(#esg)" d="M42 38h46l-6 10H52v11h26l-5 9H52v12h33l-6 10H42z"/><path class="lg-s" fill="#e7f0fb" d="M94 26l2.6 7.4L104 36l-7.4 2.6L94 46l-2.6-7.4L84 36l7.4-2.6z"/></g></svg></div>
+    <div class="bt-name">ENGLISH SYSTEM</div>
+    <div class="bt-tag">A2 → C1 · 300 JOURS · 4 COMPÉTENCES</div>
+    <div class="bt-load" aria-hidden="true"><span></span></div>
+    <div class="bt-sys">[ SYSTÈME ] Initialisation…</div>
+  </div>
+  <div class="bt-stage" id="bootStage" aria-live="polite"></div>
+  <noscript><p class="bt-p" style="text-align:center">Active JavaScript pour utiliser English System.</p></noscript>
+</div>
 
 <div class="wrap">
 <header>
-  <div class="brand"><div class="sigil" aria-hidden="true">E</div><div><div class="eyebrow">Player development protocol</div><h1>ENGLISH SYSTEM</h1><div class="sub">A2 → C1 · 300 JOURS · 2 H/JOUR · 4 COMPÉTENCES</div></div></div>
+  <div class="brand"><div class="sigil" aria-hidden="true"><svg viewBox="0 0 128 128" aria-hidden="true"><g class="lg-hex" filter="url(#esglow)" fill="none" stroke="url(#esg)" stroke-linejoin="round"><path class="lg-o" d="M64 8 113 36v56L64 120 15 92V36z" stroke-width="5"/><path class="lg-i" d="M64 20 102.5 42v44L64 108 25.5 86V42z" stroke-width="1.6" opacity=".55"/></g><g filter="url(#esglow)"><path class="lg-e" fill="url(#esg)" d="M42 38h46l-6 10H52v11h26l-5 9H52v12h33l-6 10H42z"/><path class="lg-s" fill="#e7f0fb" d="M94 26l2.6 7.4L104 36l-7.4 2.6L94 46l-2.6-7.4L84 36l7.4-2.6z"/></g></svg></div><div><div class="eyebrow">Player development protocol</div><h1>ENGLISH SYSTEM</h1><div class="sub">A2 → C1 · 300 JOURS · 2 H/JOUR · 4 COMPÉTENCES</div></div></div>
   <div class="header-right"><span class="pill" id="saveStatus">● Enregistré sur cet appareil</span></div>
 </header>
 <nav class="tabbar" id="tabbar" role="tablist" aria-label="Sections">
@@ -572,9 +670,17 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
   </section>
 </div></div>
 <div class="tabpane hidden" id="tab-settings" role="tabpanel"><div class="pane-grid">
+  <section class="panel" id="profilePanel">
+    <div class="panel-head"><div><div class="eyebrow">Joueur actif</div><h2>👤 Profil</h2></div></div>
+    <div class="prof-cur"><span class="bt-av" id="profAv">?</span><div><b id="profName">—</b><div class="tiny muted" id="profInfo"></div></div></div>
+    <div class="action-row" style="margin-top:10px"><button class="btn small primary" id="profSwitch">⇄ Changer de profil</button><button class="btn small" id="profNew">＋ Nouveau profil</button><button class="btn small ghost danger" id="profDel">Supprimer ce profil</button></div>
+    <label class="tiny" style="display:flex;gap:8px;align-items:center;margin-top:10px"><input type="checkbox" id="profAuto"> Ouvrir directement le dernier profil au lancement (sans écran de choix)</label>
+    <div class="confirm-zone" id="profDelZone"><span class="tiny" style="color:var(--red)">Tout ce profil sera effacé de cet appareil (progression, textes, enregistrements). Exporte-le avant si tu veux le garder.</span><button class="btn small danger" id="profDelGo">Effacer définitivement</button><button class="btn small ghost" id="profDelCancel">Annuler</button></div>
+    <p class="tiny muted" style="margin-top:10px">Plusieurs personnes peuvent utiliser l'app sur le même appareil ou avec le même lien : chacune a son profil, stocké uniquement sur son appareil. Pour retrouver ton profil sur un autre appareil : <b>Mes données → Exporter</b> ici, puis <b>Importer un profil</b> sur l'écran de lancement de l'autre appareil (ou active la synchronisation GitHub sur les deux).</p>
+  </section>
   <section class="panel" id="settings">
     <div class="panel-head"><h2>⚙ Réglages</h2></div>
-    <div class="two"><div class="field"><label for="playerName">Nom de joueuse</label><input type="text" id="playerName" maxlength="30" placeholder="Ton prénom"></div><div class="field"><label for="playerClass">Classe</label><select id="playerClass"><option>Chercheuse</option><option>Analyste</option><option>Stratège</option><option>Exploratrice</option><option>Oratrice</option></select></div></div>
+    <div class="two"><div class="field"><label for="playerName">Prénom ou pseudo</label><input type="text" id="playerName" maxlength="30" placeholder="Ton prénom"></div><div class="field"><label for="playerClass">Classe</label><select id="playerClass"><option>Chercheuse</option><option>Analyste</option><option>Stratège</option><option>Exploratrice</option><option>Oratrice</option></select></div></div>
     <label class="tiny" style="display:flex;gap:8px;align-items:center;margin-bottom:12px"><input type="checkbox" id="sfxToggle" checked> Sons et vibrations du Système</label>
     <div class="field"><label for="startDate">Date de début (jour 1)</label><input type="date" id="startDate"></div>
     <div class="field"><label for="track">Parcours des sujets</label><select id="track"><option value="acad">Académique & recherche (économétrie, data)</option><option value="pro">Professionnel (entreprise, entretiens)</option></select></div>
@@ -590,7 +696,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
     <h3>Voix et micro</h3>
     <div class="field"><label for="voiceSel">Voix anglaise pour les écoutes</label><select id="voiceSel"><option value="">Automatique</option></select></div>
     <div class="two">
-      <div class="field"><label for="rateSel">Vitesse</label><select id="rateSel"><option value="0.75">0,75 (lent)</option><option value="0.9">0,9</option><option value="1">1 (naturelle)</option><option value="1.15">1,15</option><option value="1.3">1,3 (rapide)</option><option value="1.5">1,5 (très rapide)</option></select></div>
+      <div class="field"><label for="rateSel">Vitesse des cartes et défis</label><select id="rateSel"><option value="0.75">0,75 (lent)</option><option value="0.9">0,9</option><option value="1">1 (naturelle)</option><option value="1.15">1,15</option><option value="1.3">1,3 (rapide)</option><option value="1.5">1,5 (très rapide)</option></select></div>
       <div class="field"><label for="langSel">Accent</label><select id="langSel"><option value="en-GB">Britannique</option><option value="en-US">Américain</option></select></div>
     </div>
     <label class="tiny" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="srToggle"> Transcription automatique de mes enregistrements</label>
@@ -659,16 +765,16 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
   </div>
 </div>
 
-<script src="content-w01-05.js?v=11"></script>
-<script src="content-w06-09.js?v=11"></script>
-<script src="content-w10-15.js?v=11"></script>
-<script src="content-w16-21.js?v=11"></script>
-<script src="content-w22-27.js?v=11"></script>
-<script src="content-w28-33.js?v=11"></script>
-<script src="content-w34-38.js?v=11"></script>
-<script src="content-w39-43.js?v=11"></script>
-<script src="content-tests.js?v=11"></script>
-<script src="placement-data.js?v=11"></script>
-<script src="app.js?v=11"></script>
+<script src="content-w01-05.js?v=12"></script>
+<script src="content-w06-09.js?v=12"></script>
+<script src="content-w10-15.js?v=12"></script>
+<script src="content-w16-21.js?v=12"></script>
+<script src="content-w22-27.js?v=12"></script>
+<script src="content-w28-33.js?v=12"></script>
+<script src="content-w34-38.js?v=12"></script>
+<script src="content-w39-43.js?v=12"></script>
+<script src="content-tests.js?v=12"></script>
+<script src="placement-data.js?v=12"></script>
+<script src="launcher.js?v=12"></script>
 </body>
 </html>

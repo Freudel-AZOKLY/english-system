@@ -25,6 +25,16 @@ Sur iPhone, installe-la bien sur l'écran d'accueil : Safari peut effacer les do
 
 Contenu intégré : les 300 jours (43 semaines d'écoutes, de lectures, de grammaire et de vocabulaire, du niveau A2 au C1) et les 10 tests mensuels.
 
+## Nouveautés de la version 12
+
+- Logo, icônes et écran de lancement animé
+- **Profils** : chaque personne qui ouvre le lien crée son propre profil (prénom, classe, sujets, test de positionnement ou jour 1). Plusieurs profils peuvent cohabiter sur le même appareil ; chacun garde sa progression, ses textes et ses enregistrements, stockés uniquement sur l'appareil
+- Écran « Qui joue ? » au lancement, avec ouverture directe possible, import d'un profil depuis un fichier, suppression avec confirmation
+- **Lecteur audio** pour toutes les écoutes et lectures : lecture, pause et reprise à la même phrase, stop, phrase précédente ou suivante, barre de progression, phrase en cours surlignée dans le texte
+- **Vitesses** de 0,7 à 1,5, avec la vitesse recommandée (★) pour chaque palier : 0,8 (A2+), 0,9 (B1), 1 (B2), 1,1 (B2+), 1,25 (C1). Ton choix est retenu pour le palier
+- Tests : 2 écoutes maximum, pause possible, pas de retour en arrière
+- Corrections : le shadowing automatique s'arrête quand on ferme la séance, les phrases courtes ne sont plus sautées à la lecture, les nombres décimaux ne sont plus coupés
+
 ## Nouveautés de la version 9
 
 - Test de positionnement au premier lancement (et dans les réglages)
