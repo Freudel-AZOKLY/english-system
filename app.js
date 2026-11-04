@@ -184,7 +184,7 @@ function questData(d){
   if(fo&&fo.skill){list.forEach(function(o){if(o.k===fo.skill){o.m+=10;o.cls+=" focus";o.tags.push(["focus","Focus +10 min"]);o.note=(o.note?o.note+" ":"")+"Focus adaptatif (bilan du jour "+fo.from+") : "+FOCUS_TIPS[fo.skill]}else if(o.k==="P"||o.k==="R")o.m-=5})}
   else if(fo&&fo.hard){list.forEach(function(o){if(o.k==="S"){o.tags.push(["focus","Mode difficile"]);o.note=(o.note?o.note+" ":"")+"Mode difficile : aucune note, 2 min de plus, et place 2 corrections de ton carnet."}})}
   var Wc=window.ES_CONTENT&&window.ES_CONTENT.weeks[weekOf(d)];
-  if(Wc&&normal){var pi=((d-1)%7)<3?0:1;list.forEach(function(o){if(o.k==="L")o.d="Écoute intégrée « "+Wc.listening[pi].title+" » avec la méthode en 6 étapes : sans texte, questions, transcription, liaisons, dictée, résumé oral.";if(o.k==="P")o.d="Phrase par phrase sur « "+Wc.listening[pi].title+" », puis enregistre ta meilleure imitation.";if(o.k==="Rd")o.d="Lecture intégrée « "+Wc.reading[pi].title+" » : texte, vocabulaire, questions corrigées et résumé en 3 phrases.";if(o.k==="G")o.d="Point de la semaine : "+Wc.grammar.title+". Leçon courte, 8 exercices corrigés, et 15 expressions ajoutées à tes cartes."})}
+  if(Wc&&normal){var pi=partIdx(d);list.forEach(function(o){if(o.k==="L")o.d="Écoute intégrée « "+Wc.listening[pi].title+" » avec la méthode en 6 étapes : sans texte, questions, transcription, liaisons, dictée, résumé oral.";if(o.k==="P")o.d="Phrase par phrase sur « "+Wc.listening[pi].title+" », puis enregistre ta meilleure imitation.";if(o.k==="Rd")o.d="Lecture intégrée « "+Wc.reading[pi].title+" » : texte, vocabulaire, questions corrigées et résumé en 3 phrases.";if(o.k==="G")o.d="Point de la semaine : "+Wc.grammar.title+". Leçon courte, 8 exercices corrigés, et 15 expressions ajoutées à tes cartes."})}
   qCache[key]=list;return list;
 }
 function qKey(d,k){return d+"_"+k}
@@ -387,7 +387,7 @@ var CONTENT=window.ES_CONTENT||{weeks:{},tests:{}};
   Object.keys(CONTENT.tests).forEach(function(t){all(CONTENT.tests[t].listening);all(CONTENT.tests[t].reading)})})();
 function weekContent(d){return CONTENT.weeks[weekOf(d)]||null}
 function posInWeek(d){return ((d-1)%7)+1}
-function partIdx(d){return posInWeek(d)<=3?0:1}
+function partIdx(d){var W=weekContent(d),n=W?Math.min(W.listening.length,W.reading.length):2,p=posInWeek(d);return n>=3?(p<=2?0:p<=4?1:2):(p<=3?0:1)}
 function todayISO(){return isoDate(new Date())}
 function addDaysISO(n){var t=new Date();t.setDate(t.getDate()+n);return isoDate(t)}
 var prefs={voice:"",rate:1,sr:true,lang:"en-GB"};
@@ -601,7 +601,7 @@ function actShadow(body,d,k,item){
   q('[data-a="next"]').onclick=function(){if(cur<sents.length-1){cur++;show()}};
   q('[data-a="auto"]').onclick=function(){if(auto){auto=false;stopSpeak();this.textContent="▶ Mode automatique";return}auto=true;this.textContent="■ Arrêter";var btn=this;
     (function loop(){if(!auto||!btn.isConnected)return;var t0=Date.now();show();speak(sents[cur],{rate:rate,onend:function(){var gap=Math.max(1500,(Date.now()-t0)*1.3);setTimeout(function(){if(!auto||!btn.isConnected)return;if(cur<sents.length-1){cur++;loop()}else{auto=false;btn.textContent="▶ Mode automatique"}},gap)}})})()};
-  show();makeRecorder(q('[data-a="rec"]'),{day:d,k:"P",label:"Shadowing"});
+  show();makeRecorder(q('[data-a="rec"]'),{day:d,k:"P",label:"Shadowing"});pronInit(body,function(){return sents[cur]});
 }
 
 /* ---- Lecture ---- */
@@ -622,7 +622,7 @@ function actReading(body,d,k,item,mode){
 
 /* ---- Grammaire et vocabulaire ---- */
 function actGrammar(body,d,k,W){
-  var G=W.grammar;
+  var G=W.grammar;if(G.ex2&&posInWeek(d)>=4)G={title:G.title+" · série 2",lesson:G.lesson,ex:G.ex2};
   body.innerHTML='<h3>'+esc(G.title)+'</h3><div class="lesson">'+esc(G.lesson).replace(/\n/g,"<br>")+'</div><h3 style="margin-top:14px">Exercices</h3><div class="gex">'+G.ex.map(function(e,i){var parts=e[0].split("___");return '<div class="gline"><span>'+(i+1)+'. '+esc(parts[0])+'</span><input type="text" data-g="'+i+'" autocomplete="off" spellcheck="false" aria-label="Réponse '+(i+1)+'"><span>'+esc(parts[1]||"")+'</span><span class="tiny gres" data-gr="'+i+'"></span></div>'}).join("")+'</div><div class="action-row"><button class="btn" data-a="check">Corriger</button><span class="tiny" data-a="score"></span></div>'+
    '<h3 style="margin-top:16px">Vocabulaire de la semaine</h3><p class="tiny muted">Ces expressions sont déjà dans tes cartes de révision. Écoute-les et fais une phrase personnelle à voix haute avec chacune.</p><div class="vocab">'+W.vocab.map(function(v,i){return '<div class="vrow"><button class="btn small ghost" data-v="'+i+'" aria-label="Écouter">🔊</button><div><b>'+esc(v[0])+'</b> — '+esc(v[1])+'<div class="tiny muted">'+esc(v[2])+'</div></div></div>'}).join("")+'</div>';
   body.querySelector('[data-a="check"]').onclick=function(){var ok=0,ans=0;G.ex.forEach(function(e,i){var inp=body.querySelector('[data-g="'+i+'"]'),res=body.querySelector('[data-gr="'+i+'"]');var v=norm(inp.value);var accepted=e[1].split("|").map(function(a){return a==="Ø"?"":norm(a)});if(v!==""||accepted.indexOf("")>=0)ans++;var good=accepted.indexOf(v)>=0;if(good)ok++;inp.classList.toggle("good",good);inp.classList.toggle("bad",!good);res.textContent=good?"✓":"→ "+(e[1].split("|")[0]==="Ø"?"(rien)":e[1].split("|")[0])});
@@ -1330,6 +1330,26 @@ function renderExamPanel(){var p=$("examBody");if(!p)return;var ex=state.exams||
   '<div class="action-row"><button class="btn '+(d>=270||last?"primary":"")+'" id="examOpen">'+(D.sec&&!D.result?"▶ Reprendre l'examen":last?"Repasser l'examen blanc":"Commencer l'examen blanc")+'</button>'+(last?'<button class="btn ghost" id="examSee">Voir le corrigé</button>':'')+'</div>';
   $("examOpen").onclick=function(){if(D.result){state.examDraft={}}openExam()};var se=$("examSee");if(se)se.onclick=function(){if(!(state.examDraft||{}).result){toast("Le corrigé détaillé n'est plus disponible : repasse l'examen.");return}openExam();exGo(6)}}
 renderExamPanel();
+/* =========== v15 : vérification de prononciation (shadowing) =========== */
+function wordsOf(t){return norm(t).replace(/[^a-z0-9' ]/g," ").split(/\s+/).filter(Boolean)}
+function lcsMark(a,b){var n=a.length,m=b.length,L=[];for(var i=0;i<=n;i++){L.push(new Array(m+1).fill(0))}
+  for(i=n-1;i>=0;i--)for(var j=m-1;j>=0;j--)L[i][j]=a[i]===b[j]?L[i+1][j+1]+1:Math.max(L[i+1][j],L[i][j+1]);
+  var ok=new Array(n).fill(false);i=0;j=0;while(i<n&&j<m){if(a[i]===b[j]){ok[i]=true;i++;j++}else if(L[i+1][j]>=L[i][j+1])i++;else j++}return ok}
+function pronInit(body,getTarget){var host=body.querySelector(".shadow-sent");if(!host)return;var box=document.createElement("div");box.className="pron";host.parentNode.insertBefore(box,host.nextSibling.nextSibling);
+  if(!SR){box.innerHTML='<p class="tiny muted">🎙 La vérification automatique de prononciation fonctionne sur Chrome ou Edge (ordinateur, Android). Sur cet appareil, enregistre-toi plus bas et compare à l\'oreille.</p>';return}
+  box.innerHTML='<div class="action-row"><button class="btn small" data-pr="go">🎙 Vérifier ma prononciation</button><span class="tiny muted" data-pr="st">Lis la phrase à voix haute après avoir touché le bouton.</span></div><div class="pron-res" data-pr="res" aria-live="polite"></div>';
+  var btn=box.querySelector('[data-pr="go"]'),st=box.querySelector('[data-pr="st"]'),res=box.querySelector('[data-pr="res"]'),rec=null,best={};
+  new MutationObserver(function(){res.innerHTML="";st.textContent="Lis la phrase à voix haute après avoir touché le bouton."}).observe(host,{childList:true,characterData:true,subtree:true});
+  btn.onclick=function(){if(rec){try{rec.stop()}catch(e){}return}stopSpeak();var target=getTarget(),tw=wordsOf(target);
+    try{rec=new SR()}catch(e){st.textContent="Reconnaissance vocale indisponible.";return}
+    rec.lang=prefs.lang||"en-GB";rec.interimResults=false;rec.maxAlternatives=4;rec.continuous=false;var got=false;
+    rec.onresult=function(e){got=true;var r=e.results[0],bestOk=null,bestT="";for(var k=0;k<r.length;k++){var ok=lcsMark(tw,wordsOf(r[k].transcript));var c=ok.filter(Boolean).length;if(!bestOk||c>bestOk.filter(Boolean).length){bestOk=ok;bestT=r[k].transcript}}
+      var c=bestOk.filter(Boolean).length,p=Math.round(c/Math.max(1,tw.length)*100);var raw=target.split(/\s+/),idx=0;
+      res.innerHTML='<div class="pron-score '+(p>=90?"ok":p>=70?"mid":"ko")+'"><b class="num">'+p+' %</b> '+(p>=90?"Excellent, tout est compris.":p>=70?"Bien. Retravaille les mots en rouge.":"Les mots en rouge n'ont pas été reconnus. Écoute-les de nouveau, puis réessaie plus lentement.")+'</div><p class="pron-words">'+raw.map(function(w){var n=wordsOf(w).length,cls="";for(var q=0;q<n;q++){if(!bestOk[idx+q])cls="ko"}idx+=n;return '<span class="'+(n?cls||"ok":"")+'">'+esc(w)+'</span>'}).join(" ")+'</p><p class="tiny muted">Compris : « '+esc(bestT)+' »</p>';
+      if(p>=90)sfx("quest")};
+    rec.onerror=function(e){st.textContent=e.error==="not-allowed"?"Micro refusé : autorise-le dans les réglages du navigateur.":e.error==="no-speech"?"Je n'ai rien entendu. Réessaie en parlant plus fort.":"Reconnaissance interrompue ("+e.error+").";};
+    rec.onend=function(){rec=null;btn.textContent="🎙 Vérifier ma prononciation";btn.classList.remove("on");if(got)st.textContent="Réessaie autant que tu veux."};
+    try{rec.start();btn.textContent="■ J'ai fini";btn.classList.add("on");st.textContent="J'écoute… lis la phrase.";res.innerHTML=""}catch(e){rec=null;st.textContent="Impossible de lancer le micro."}}}
 /* =========== Profils =========== */
 (function(){var P=window.ES_PROFILES;
   function info(){var nm=(state.playerName||(ESP&&ESP.name)||"Joueur").trim();$("profAv").textContent=(nm[0]||"?").toUpperCase();$("profName").textContent=nm;
@@ -1347,7 +1367,7 @@ renderExamPanel();
   $("playerName").addEventListener("change",info);$("playerClass").addEventListener("change",info);
   if(ESP.welcome)setTimeout(function(){sysMsg("[ SYSTÈME ]",ESP.welcome,"gold")},400);
 })();
-var uiReady=true;backupBanner();if(!state.tourSeen&&prefs.tour!==false)setTimeout(function(){startTour(firstPopups)},350);else firstPopups();var APP_VERSION="14";
+var uiReady=true;backupBanner();if(!state.tourSeen&&prefs.tour!==false)setTimeout(function(){startTour(firstPopups)},350);else firstPopups();var APP_VERSION="15";
 var swReg=null;
 if("serviceWorker" in navigator&&location.protocol!=="file:"){
   var hadController=!!navigator.serviceWorker.controller,reloading=false;
@@ -1375,7 +1395,7 @@ function runDiagnostic(){
   add(nw>=43&&nt>=10?"ok":"bad","Contenu intégré",nw+" semaines, "+nt+" tests mensuels",nw?"":"Recharge l'app avec une connexion.");
   ensureCards();add("ok","Cartes de révision",Object.keys(state.srs).length+" cartes, "+dueCards().length+" à réviser aujourd'hui");
   if("serviceWorker" in navigator){tasks.push(navigator.serviceWorker.getRegistration().then(function(r){var ctl=!!navigator.serviceWorker.controller;add(r&&ctl?"ok":"warn","Mises à jour automatiques",r?(ctl?"Actives":"Actives après la prochaine ouverture"):"Non installées","Ferme puis rouvre l'app.")}))}else add("bad","Mises à jour automatiques","Non prises en charge par ce navigateur");
-  if(window.caches){tasks.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.open(k).then(function(c){return c.keys()})}))}).then(function(lists){var urls=[].concat.apply([],lists).map(function(r){return r.url});var need=["app.js","content-w01-05.js", "content-w06-09.js", "content-w10-15.js", "content-w16-21.js", "content-w22-27.js", "content-w28-33.js", "content-w34-38.js", "content-w39-43.js", "content-tests.js","launcher.js","index.html"];var miss=need.filter(function(n){return !urls.some(function(u){return u.indexOf(n)>=0})});add(miss.length?"warn":"ok","Fonctionnement hors ligne",miss.length?"Fichiers pas encore en mémoire : "+miss.join(", "):"Prêt","Ouvre l'app une fois avec une connexion, puis rouvre-la.")}).catch(function(){add("warn","Fonctionnement hors ligne","Vérification impossible")}))}
+  if(window.caches){tasks.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.open(k).then(function(c){return c.keys()})}))}).then(function(lists){var urls=[].concat.apply([],lists).map(function(r){return r.url});var need=["app.js","content-w01-05.js", "content-w06-09.js", "content-w10-15.js", "content-w16-21.js", "content-w22-27.js", "content-w28-33.js", "content-w34-38.js", "content-w39-43.js", "content-tests.js","content-plus-m01-02.js","launcher.js","index.html"];var miss=need.filter(function(n){return !urls.some(function(u){return u.indexOf(n)>=0})});add(miss.length?"warn":"ok","Fonctionnement hors ligne",miss.length?"Fichiers pas encore en mémoire : "+miss.join(", "):"Prêt","Ouvre l'app une fois avec une connexion, puis rouvre-la.")}).catch(function(){add("warn","Fonctionnement hors ligne","Vérification impossible")}))}
   tasks.push(db().then(function(){add("ok","Stockage des enregistrements audio","Fonctionne")}).catch(function(){add("bad","Stockage des enregistrements audio","Indisponible","Désactive la navigation privée.")}));
   if(navigator.storage&&navigator.storage.persisted)tasks.push(navigator.storage.persisted().then(function(p){add(p?"ok":"warn","Protection contre l'effacement",p?"Données protégées":"Le navigateur peut effacer les données s'il manque de place","Installe l'app et exporte régulièrement tes données.")}));
   if(!TTS.ok)add("bad","Voix de lecture","Non disponible sur ce navigateur","Utilise Safari, Chrome ou Edge à jour.");

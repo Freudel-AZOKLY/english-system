@@ -25,6 +25,11 @@ Sur iPhone, installe-la bien sur l'écran d'accueil : Safari peut effacer les do
 
 Contenu intégré : les 300 jours (43 semaines d'écoutes, de lectures, de grammaire et de vocabulaire, du niveau A2 au C1) et les 10 tests mensuels.
 
+## Nouveautés de la version 15
+
+- **Mois 1 et 2 enrichis** : chaque semaine (1 à 9) a maintenant 3 écoutes, 3 lectures et 2 séries d'exercices de grammaire. Une nouvelle écoute et une nouvelle lecture tous les 2 jours, une nouvelle série de grammaire en fin de semaine. Contenu original relu par un correcteur indépendant
+- **Vérification de prononciation** dans le shadowing : tu lis la phrase, l'app la reconnaît et surligne les mots mal compris, avec un score (Chrome et Edge ; sur iPhone selon Safari)
+
 ## Nouveautés de la version 14
 
 - **Parcours général** (vie quotidienne, voyages, culture, actualité) pour toute personne qui utilise l'app : 100 sujets, objectifs mensuels, donjons et scénarios de conversation adaptés. Choix proposé à la création du profil et dans les réglages
