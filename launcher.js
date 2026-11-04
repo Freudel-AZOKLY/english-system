@@ -1,7 +1,7 @@
 /* English System : écran de lancement, profils locaux, chargement de l'app */
 (function(){
 "use strict";
-var REG="englishSystem_profiles",DEV="englishSystem_device",PFX="englishSystem_v3_",APPV="12";
+var REG="englishSystem_profiles",DEV="englishSystem_device",PFX="englishSystem_v3_",APPV="13";
 var CLASSES=window.ES_CLASSES=["Chercheuse","Chercheur","Analyste","Stratège","Exploratrice","Explorateur","Oratrice","Orateur","Bâtisseuse","Bâtisseur"];
 var RANKS=["E-RANK","D-RANK","C-RANK","B-RANK","A-RANK","S-RANK","NATIONAL LEVEL","SOVEREIGN // C1"];
 var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;

@@ -25,6 +25,15 @@ Sur iPhone, installe-la bien sur l'écran d'accueil : Safari peut effacer les do
 
 Contenu intégré : les 300 jours (43 semaines d'écoutes, de lectures, de grammaire et de vocabulaire, du niveau A2 au C1) et les 10 tests mensuels.
 
+## Nouveautés de la version 13
+
+- Sous-onglets dans Progrès (Statut, Stats, Programme, Bilans, Titres), Outils (Correcteur IA, Carnet, Journal, Ressources) et Réglages (Profil, Réglages, Données, Diagnostic) : plus besoin de faire défiler des pages très longues. Le dernier sous-onglet ouvert est retenu
+- Carte de progression affichée mois par mois (M1 à M10, avec avancement), ou les 300 jours d'un coup
+- Bilan hebdomadaire noté avec des boutons de 1 à 5 au lieu de champs numériques
+- Anneau d'avancement de la séance du jour (blocs validés)
+- Profil visible dans l'en-tête, qui ouvre directement la page Profil
+- Sur téléphone : blocs terminés plus compacts, en-tête allégé, notifications au-dessus de la barre d'onglets
+
 ## Nouveautés de la version 12
 
 - Logo, icônes et écran de lancement animé
